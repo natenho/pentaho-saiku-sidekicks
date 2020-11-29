@@ -6,7 +6,7 @@
   "content_scripts": [
     {
       "matches": ["*://*/pentaho/Home", "*://*/pentaho/Home?*"],
-      "js": ["heatmap.js"],
+      "js": ["heatmap.js", "chroma.min.js"],
       "run_at": "document_end",
       "all_frames": true
     }

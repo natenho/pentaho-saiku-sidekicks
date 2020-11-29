@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "Pentaho Heat Map",
+  "description": "Google Chrome extension to build heat maps on Pentaho Saiku Analytics reports",
+  "version": "0.0.0.1",
+  "content_scripts": [
+    {
+      "matches": ["*://*/pentaho/Home", "*://*/pentaho/Home?*"],
+      "js": ["heatmap.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab",
+    "contextMenus"
+  ]
+}

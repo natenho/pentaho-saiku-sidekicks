@@ -1,7 +1,3 @@
-function contextMenusOnClickHandler(info, tab) {
-  chrome.tabs.sendMessage(tab.id, { menuFunction: info.menuItemId });
-}
-
 chrome.contextMenus.onClicked.addListener(contextMenusOnClickHandler);
 
 chrome.runtime.onInstalled.addListener(function () {
@@ -26,3 +22,7 @@ chrome.runtime.onInstalled.addListener(function () {
     id: "clearHeatMap",
   });
 });
+
+function contextMenusOnClickHandler(info, tab) {
+  chrome.tabs.sendMessage(tab.id, { operation: info.menuItemId });
+}

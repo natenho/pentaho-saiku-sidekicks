@@ -1,9 +1,59 @@
+// TODO: Export colored excel file: https://github.com/SheetJS/sheetjs/issues/1795
+const DEFAULT_OPERATION = "rowHeatMap";
+
+var lastOperation = DEFAULT_OPERATION;
+
 chrome.runtime.onMessage.addListener((request, _sender, _response) => {
-  console.time(request.menuFunction);
-  fetchDataElements();
-  window[request.menuFunction]();
-  console.timeEnd(request.menuFunction);
+  execute(request.operation);
 });
+
+function execute(operation) {
+  if (!lastOperation) {
+    lastOperation = DEFAULT_OPERATION;
+  }
+
+  if (!operation) {
+    operation = lastOperation;
+  }
+
+  console.time(operation);
+
+  showProcessing();
+
+  activeGwtFrame = document.querySelector(
+    'div[style="width: 100%; height: 100%; padding: 0px; margin: 0px; position: relative; left: 0px;"] .gwt-Frame'
+  )?.contentDocument;
+
+  fetchDataElements();
+  callFunctionByName(operation);
+  hideProcessing();
+
+  lastOperation = operation;
+
+  console.timeEnd(operation);
+}
+
+function showProcessing() {}
+
+// Select all data elements in pivot table
+function fetchDataElements() {
+  elements = activeGwtFrame.querySelectorAll("tbody tr [class='data'] [rel]");
+  lastRel = getLastRel(elements);
+}
+
+// "rel" attribute contains the cell coordinate in pivot in the format "col:row"
+function getLastRel(elements) {
+  var lastElement = elements[elements.length - 1];
+  lastElement.getAttribute("rel");
+  var lastElementRel = lastElement.getAttribute("rel").split(":");
+  return { col: lastElementRel[0], row: lastElementRel[1] };
+}
+
+function callFunctionByName(operation) {
+  window[operation]();
+}
+
+function hideProcessing() {}
 
 function clearHeatMap() {
   for (var index = 0; index < elements.length; index++) {
@@ -41,29 +91,6 @@ function heatMap(elementsToBeColorized) {
   colorize(elementsToBeColorized, cellValues);
 }
 
-// To export colored excel file: https://github.com/SheetJS/sheetjs/issues/1795
-
-// Select all data elements in the pivot (elements with the class "data" containing a "rel" attribute)
-function fetchDataElements() {
-  activeGwtFrame = document.querySelector(
-    'div[style="width: 100%; height: 100%; padding: 0px; margin: 0px; position: relative; left: 0px;"] .gwt-Frame'
-  ).contentDocument;
-
-  //var processingContainer = document.querySelector("processing_container");
-  //var processingDialog = document.querySelector("processing");
-
-  elements = activeGwtFrame.querySelectorAll("tbody tr [class='data'] [rel]");
-  lastRel = getLastRel(elements);
-}
-
-// "rel" attribute contains the cell coordinate in pivot in the format "col:row"
-function getLastRel(elements) {
-  var lastElement = elements[elements.length - 1];
-  lastElement.getAttribute("rel");
-  var lastElementRel = lastElement.getAttribute("rel").split(":");
-  return { col: lastElementRel[0], row: lastElementRel[1] };
-}
-
 // Generate an array of the values contained in the "alt" attribute of the elements
 function extractValues(elements) {
   var cellValues = new Array(length);
@@ -84,18 +111,31 @@ var maxValueIgnoringNull = (a, b) => (isNaN(b) || b < a ? a : b);
 function colorize(elements, values) {
   const PALETTE_SIZE = 255;
 
-  var colors = chroma
-    .scale(["lightgreen", "yellow", "red"])
-    .mode("lab")
-    .colors(PALETTE_SIZE);
+  chrome.storage.sync.get(
+    {
+      heatMapColors: ["white", "red"],
+      heatMapInvert: false,
+    },
+    function (settings) {
+      var heatMapColors = settings.heatMapColors.split(",");
 
-  var min = values.reduce(minValueIgnoringNull, Number.MAX_VALUE);
-  var max = values.reduce(maxValueIgnoringNull, Number.MIN_VALUE);
+      if (settings.heatMapInvert) {
+        heatMapColors = heatMapColors.reverse();
+      }
 
-  for (var index = 0; index < elements.length; index++) {
-    var colorIndex = Math.round(normalize(values[index], min, max) * (PALETTE_SIZE - 1));
-    elements[
-      index
-    ].parentElement.style = `background-color: ${colors[colorIndex]} !important`;
-  }
+      var colors = chroma.scale(heatMapColors).mode("lab").colors(PALETTE_SIZE);
+
+      var min = values.reduce(minValueIgnoringNull, Number.MAX_VALUE);
+      var max = values.reduce(maxValueIgnoringNull, Number.MIN_VALUE);
+
+      for (var index = 0; index < elements.length; index++) {
+        var colorIndex = Math.round(
+          normalize(values[index], min, max) * (PALETTE_SIZE - 1)
+        );
+        elements[
+          index
+        ].parentElement.style = `background-color: ${colors[colorIndex]} !important`;
+      }
+    }
+  );
 }

@@ -2,22 +2,22 @@ chrome.contextMenus.onClicked.addListener(contextMenusOnClickHandler);
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.contextMenus.create({
-    title: "By Row",
+    title: "Heat map by Row",
     contexts: ["frame"],
     id: "rowHeatMap",
   });
   chrome.contextMenus.create({
-    title: "By Column",
+    title: "Heat map by Column",
     contexts: ["frame"],
     id: "colHeatMap",
   });
   chrome.contextMenus.create({
-    title: "By Table",
+    title: "Heat map on Table",
     contexts: ["frame"],
     id: "tableHeatMap",
   });
   chrome.contextMenus.create({
-    title: "Clear",
+    title: "Clear heat map",
     contexts: ["frame"],
     id: "clearHeatMap",
   });

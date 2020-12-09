@@ -18,9 +18,8 @@ function execute(operation) {
 
   console.time(operation);
 
-  freezeColHeaders();
-  freezeRowHeaders();
-
+  freeze();
+    
   showProcessing();
 
   activeGwtFrame = document.querySelector(

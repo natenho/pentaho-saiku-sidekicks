@@ -1,27 +1,31 @@
-const TOP_OFFSET = 106;
+const TOP_OFFSET = 102;
 
-function freezeColHeaders() {
+function freeze() {
   activeGwtFrame = document.querySelector(
     'div[style="width: 100%; height: 100%; padding: 0px; margin: 0px; position: relative; left: 0px;"] .gwt-Frame'
   )?.contentDocument;
 
-  var rowHeaderElements = activeGwtFrame.querySelectorAll(".row_header");
+  rowHeaderElements = activeGwtFrame.querySelectorAll(".row_header");
+  var rowHeaderElementRect = rowHeaderElements[0].getBoundingClientRect();
+  rowHeaderElementTop = rowHeaderElementRect.top;
+  rowHeaderElementHeight = rowHeaderElementRect.height;
 
-  const TOP_ROWHEADER_OFFSET = 4;
+  freezeColHeaders();
+  freezeRowHeaders();
+}
 
+function freezeColHeaders() {
   rowHeaderElements.forEach((rowHeaderElement) => {
     rowHeaderElement.style.position = "sticky";
     rowHeaderElement.style.zIndex = "80";
     rowHeaderElement.style.top = `${
-      rowHeaderElement.getBoundingClientRect().top -
-      TOP_OFFSET +
-      TOP_ROWHEADER_OFFSET
+      rowHeaderElement.getBoundingClientRect().top - TOP_OFFSET
     }px`;
   });
 
-  var firstColumnRel = rowHeaderElements.length;
+  var firstColumnIndex = rowHeaderElements.length + 1;
   var firstColHeaders = activeGwtFrame.querySelectorAll(
-    `thead [class='col'] [rel$=':${firstColumnRel}']`
+    `thead tr th:nth-child(${firstColumnIndex})`
   );
 
   for (let headerRel = 0; headerRel < firstColHeaders.length; headerRel++) {
@@ -45,16 +49,7 @@ function freezeColHeaders() {
 }
 
 function freezeRowHeaders() {
-  activeGwtFrame = document.querySelector(
-    'div[style="width: 100%; height: 100%; padding: 0px; margin: 0px; position: relative; left: 0px;"] .gwt-Frame'
-  )?.contentDocument;
-
-  var rowHeaderElementRect = activeGwtFrame
-    .querySelector(".row_header")
-    .getBoundingClientRect();
-
-  var topStick =
-    rowHeaderElementRect.top + rowHeaderElementRect.height - TOP_OFFSET;
+  var topStick = rowHeaderElementTop + rowHeaderElementHeight - TOP_OFFSET;
 
   var elements = activeGwtFrame.querySelectorAll(
     "tbody tr th, .all_null, .row_header"

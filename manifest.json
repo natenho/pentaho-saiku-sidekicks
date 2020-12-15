@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Pentaho Sidekicks",
-  "description": "Google Chrome extension to add some features and tweaks to Pentaho, like building heat maps over Saiku Analytics reports",
+  "description": "Adds heat maps over Saiku Analytics reports in Pentaho",
   "version": "0.0.2",
   "browser_action": {
     "default_icon": "icon.png",

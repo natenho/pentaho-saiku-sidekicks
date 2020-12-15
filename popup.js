@@ -1,3 +1,5 @@
+const DEFAULT_HEATMAP_COLORS = "white,red";
+
 function saveOptions() {
   var colors = document.getElementById("heatMapColors").value;
   var invert = document.getElementById("heatMapInvert").checked;
@@ -19,7 +21,7 @@ function saveOptions() {
 function restoreOptions() {
   chrome.storage.sync.get(
     {
-      heatMapColors: "white,red",
+      heatMapColors: DEFAULT_HEATMAP_COLORS,
       heatMapInvert: false,
     },
     function (settings) {      

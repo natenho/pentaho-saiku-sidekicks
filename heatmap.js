@@ -1,6 +1,6 @@
 // TODO: Export colored excel file: https://github.com/SheetJS/sheetjs/issues/1795
 const DEFAULT_OPERATION = "rowHeatMap";
-
+const DEFAULT_HEATMAP_COLORS = "white,red";
 var lastOperation = DEFAULT_OPERATION;
 
 chrome.runtime.onMessage.addListener((request, _sender, _response) => {
@@ -113,7 +113,7 @@ function colorize(elements, values) {
 
   chrome.storage.sync.get(
     {
-      heatMapColors: ["white", "red"],
+      heatMapColors: DEFAULT_HEATMAP_COLORS,
       heatMapInvert: false,
     },
     function (settings) {

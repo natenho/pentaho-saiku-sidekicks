@@ -21,6 +21,12 @@ chrome.runtime.onInstalled.addListener(function () {
     contexts: ["frame"],
     id: "clearHeatMap",
   });
+
+  chrome.tabs.query({ url: "*://*/pentaho/Home*" }, function (tabs) {
+    tabs.forEach((tab) => {
+      chrome.tabs.reload(tab.id, { bypassCache: true });
+    });
+  });
 });
 
 function contextMenusOnClickHandler(info, tab) {

@@ -1,6 +1,7 @@
 // TODO: Export colored excel file: https://github.com/SheetJS/sheetjs/issues/1795
 const DEFAULT_OPERATION = "rowHeatMap";
 const DEFAULT_HEATMAP_COLORS = "white,red";
+const DEFAULT_HEATMAP_STEPS = 256;
 var lastOperation = DEFAULT_OPERATION;
 
 chrome.runtime.onMessage.addListener((request, _sender, _response) => {
@@ -16,8 +17,6 @@ function execute(operation) {
     operation = lastOperation;
   }
 
-  console.time(operation);
-
   showProcessing();
 
   activeGwtFrame = document.querySelector(
@@ -29,8 +28,6 @@ function execute(operation) {
   hideProcessing();
 
   lastOperation = operation;
-
-  console.timeEnd(operation);
 }
 
 function showProcessing() {}
@@ -108,29 +105,30 @@ var minValueIgnoringNull = (a, b) => (isNaN(b) || b > a ? a : b);
 var maxValueIgnoringNull = (a, b) => (isNaN(b) || b < a ? a : b);
 
 // Change the element style based on the relative index in the pallette
-function colorize(elements, values) {
-  const PALETTE_SIZE = 255;
+function colorize(elements, values) {  
 
   chrome.storage.sync.get(
     {
       heatMapColors: DEFAULT_HEATMAP_COLORS,
       heatMapInvert: false,
+      heatMapSteps: DEFAULT_HEATMAP_STEPS
     },
     function (settings) {
       var heatMapColors = settings.heatMapColors.split(",");
+      var heatMapSteps = settings.heatMapSteps;
 
       if (settings.heatMapInvert) {
         heatMapColors = heatMapColors.reverse();
       }
 
-      var colors = chroma.scale(heatMapColors).mode("lab").colors(PALETTE_SIZE);
+      var colors = chroma.scale(heatMapColors).mode("lab").colors(heatMapSteps);
 
       var min = values.reduce(minValueIgnoringNull, Number.MAX_VALUE);
       var max = values.reduce(maxValueIgnoringNull, Number.MIN_VALUE);
 
       for (var index = 0; index < elements.length; index++) {
         var colorIndex = Math.round(
-          normalize(values[index], min, max) * (PALETTE_SIZE - 1)
+          normalize(values[index], min, max) * (heatMapSteps - 1)
         );
         elements[
           index

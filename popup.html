@@ -21,35 +21,45 @@
     .footer {
       font-size: xx-small;
     }
+
+    .setting {
+      margin: 5px;
+    }
   </style>
 </head>
 
 <body>
-  <img src="icon.png" class="logo" width="32px" height="32px" />
-  <h1>Pentaho Sidekicks</h1>  
-  <br />
-  <label for="heatMapColors">Heat map colors</label>
-  <select id="heatMapColors">
-    <option value="white,red">Red White</option>
-    <option value="lightgreen,yellow,red">Green Yellow Red</option>
-  </select>
+  <img src="icon.png" class="logo" width="24px" height="24px" />
+  <h1>Pentaho Sidekicks</h1>
 
-  <label>
+  <div class="setting">
+    <label for="heatMapColors">Heat map colors</label>
+    <select id="heatMapColors">
+      <option value="white,red">Red White</option>
+      <option value="lightgreen,yellow,red">Green Yellow Red</option>
+    </select>
+
     <input type="checkbox" id="heatMapInvert" />
-    Invert
-  </label>
+    <label for="heatMapInvert">Invert</label>
+  </div>
+
+  <div class="setting">
+    <label for="heatMapSteps">Heat map steps&nbsp;</label>
+    <input type="range" id="heatMapSteps" min="1" max="256" value="256">
+    <span id="heatMapStepsValue"></span>
+  </div>
+
   <br />
-  <br />
+
   <div class="footer">
     <p>
       Developed by Renato Lima
-      <a target="_blank" href="http://github.com/natenho/pentaho-sidekicks">http://github.com/natenho/pentaho-sidekicks</a>
+      <a target="_blank"
+        href="http://github.com/natenho/pentaho-sidekicks">http://github.com/natenho/pentaho-sidekicks</a>&nbsp;|&nbsp;
+      <a target="_blank" href="https://icons8.com/icons/set/heat-map">Heat Map icon</a>&nbsp;by&nbsp;<a target="_blank"
+        href="https://icons8.com">Icons8</a>
     </p>
 
-    <p>
-      <a target="_blank" href="https://icons8.com/icons/set/heat-map">Heat Map icon</a>
-      by <a target="_blank" href="https://icons8.com">Icons8</a>
-    </p>
   </div>
   <script src="popup.js"></script>
 </body>

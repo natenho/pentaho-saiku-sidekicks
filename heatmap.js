@@ -1,6 +1,6 @@
 // TODO: Export colored excel file: https://github.com/SheetJS/sheetjs/issues/1795
 const DEFAULT_OPERATION = "rowHeatMap";
-const DEFAULT_HEATMAP_COLORS = "white,red";
+const DEFAULT_HEATMAP_COLORS = "lightgreen,yellow,red";
 const DEFAULT_HEATMAP_STEPS = 256;
 var lastOperation = DEFAULT_OPERATION;
 

@@ -1,4 +1,4 @@
-const DEFAULT_HEATMAP_COLORS = "white,red";
+const DEFAULT_HEATMAP_COLORS = "lightgreen,yellow,red";
 const DEFAULT_HEATMAP_STEPS = 256;
 const MAX_HEATMAP_STEPS = 256;
 

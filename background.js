@@ -27,6 +27,8 @@ chrome.runtime.onInstalled.addListener(function () {
       chrome.tabs.reload(tab.id, { bypassCache: true });
     });
   });
+
+  chrome.tabs.create({ url: chrome.extension.getURL("help.html") });
 });
 
 function contextMenusOnClickHandler(info, tab) {

@@ -1,6 +1,13 @@
-const DEFAULT_HEATMAP_COLORS = "lightgreen,yellow,red";
-const DEFAULT_HEATMAP_STEPS = 256;
-const MAX_HEATMAP_STEPS = 256;
+function loadHeatMapColors() {
+  var select = document.getElementById("heatMapColors");
+
+  DEFAULT_HEATMAP_PALETTES.forEach((palette) => {
+    var option = document.createElement("option");
+    option.textContent = palette.id;
+    option.value = palette.value.join(",");
+    select.appendChild(option);
+  });
+}
 
 function saveOptions() {
   var colors = document.getElementById("heatMapColors").value;
@@ -52,6 +59,8 @@ function updateheatMapStepsValue() {
     "heatMapStepsValue"
   ).innerText = document.getElementById("heatMapSteps").value;
 }
+
+loadHeatMapColors();
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document

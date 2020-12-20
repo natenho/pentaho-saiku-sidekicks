@@ -1,6 +1,6 @@
 chrome.contextMenus.onClicked.addListener(contextMenusOnClickHandler);
 
-chrome.runtime.onInstalled.addListener(function () {
+chrome.runtime.onInstalled.addListener(function (details) {
   chrome.contextMenus.create({
     title: "Heat map by Row",
     contexts: ["frame"],
@@ -28,7 +28,13 @@ chrome.runtime.onInstalled.addListener(function () {
     });
   });
 
-  chrome.tabs.create({ url: chrome.extension.getURL("help.html") });
+  if (details.reason === "install") {    
+    chrome.tabs.create({ url: chrome.extension.getURL("help.html") });
+  }
+
+  if(details.reason === "update")  {
+    chrome.storage.sync.clear();
+  }
 });
 
 function contextMenusOnClickHandler(info, tab) {

@@ -9,6 +9,10 @@ function loadHeatMapColors() {
   });
 }
 
+function openHelp() {
+  chrome.tabs.create({ url: chrome.extension.getURL("help.html") });
+}
+
 function saveOptions() {
   var colors = document.getElementById("heatMapColors").value;
   var invert = document.getElementById("heatMapInvert").checked;
@@ -71,3 +75,4 @@ document
   .getElementById("heatMapSteps")
   .addEventListener("input", updateheatMapStepsValue);
 document.getElementById("heatMapSteps").addEventListener("change", saveOptions);
+document.getElementById("help").addEventListener("click", openHelp);

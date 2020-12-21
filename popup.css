@@ -1,0 +1,82 @@
+body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-size: 65%;
+  margin: 5px 10px 10px;
+  min-width: 500px;
+}
+
+h1 {
+  margin-left: 30px;
+  color: #3d3d3d;
+  font-size: medium;
+  vertical-align: middle;
+}
+
+h2 {
+  color: #3d3d3d;
+  padding: 5px;
+  margin: 0px;
+  width: 100px;
+  font-size: x-small;
+  vertical-align: middle;
+  background-color: #ebebeb;
+  border: 1px solid #e0e0e0;
+  border-bottom: 0;
+  float: left;
+  text-align: center;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.logo {
+  float: left;
+}
+
+.footer {
+  font-size: xx-small;
+  margin: 5px;
+}
+
+.setting {
+  padding: 10px 15px;
+  clear: both;
+  display: flex;
+  align-items: center;
+  background-color: #f8f8f8;
+  border: 1px solid #e0e0e0;
+}
+
+label {
+  width: 60px;
+}
+
+.heatmap-colorscales-row {
+  width: 240px;
+}
+
+.heatmap-colorscales-row:after {
+  content: "";
+  display: table;  
+  width: 112px;
+}
+
+.heatmap-colorscales-item {
+  background-repeat: no-repeat;
+  background-position: center;
+  float: left;
+  display: block;
+  margin: 0;
+  padding: 5px;
+  width: 28px;
+  height: 26px;
+  text-align: center;
+}
+
+.heatmap-colorscales-item:hover {
+  cursor: pointer;
+  background-color: #c5c5c5;
+}
+
+.heatmap-colorscales-item.active {
+  background-color: #0080fc;
+}

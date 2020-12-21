@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Pentaho Sidekicks</title>
+  <title>Pentaho Saiku Sidekicks</title>
   <style>
     body {
       margin: 5px 10px 10px;
@@ -20,6 +20,7 @@
 
     .footer {
       font-size: xx-small;
+      margin: 5px;
     }
 
     .setting {
@@ -30,13 +31,11 @@
 
 <body>
   <img src="icon.png" class="logo" width="24px" height="24px" />
-  <h1>Pentaho Sidekicks</h1>
+  <h1>Pentaho Saiku Sidekicks</h1>
 
   <div class="setting">
     <label for="heatMapColors">Heat map colors</label>
-    <select id="heatMapColors">
-      <option value="white,red">Red White</option>
-      <option value="lightgreen,yellow,red">Green Yellow Red</option>
+    <select id="heatMapColors">      
     </select>
 
     <input type="checkbox" id="heatMapInvert" />
@@ -52,16 +51,22 @@
   <br />
 
   <div class="footer">
+    <p><a href="#" id="help">Quick Start Tutorial</a></p>
     <p>
-      Developed by Renato Lima
+      <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=D5KHS5GJPJ5PQ&amp;currency_code=BRL&amp;source=url"
+        rel="nofollow">
+        <img src="https://img.shields.io/badge/Donate-PayPal-green.svg" alt="Fazer uma doação" width="77px" height="16px"
+          style="display: inline-block; vertical-align:middle" /></a>&nbsp;Developed by Renato Lima
       <a target="_blank"
         href="http://github.com/natenho/pentaho-sidekicks">http://github.com/natenho/pentaho-sidekicks</a>&nbsp;|&nbsp;
       <a target="_blank" href="https://icons8.com/icons/set/heat-map">Heat Map icon</a>&nbsp;by&nbsp;<a target="_blank"
         href="https://icons8.com">Icons8</a>
+
     </p>
 
   </div>
-  <script src="popup.js"></script>
+  <script src="common.js"></script>
+  <script src="popup.js"></script>  
 </body>
 
 </html>

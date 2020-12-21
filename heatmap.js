@@ -1,8 +1,4 @@
-// TODO: Export colored excel file: https://github.com/SheetJS/sheetjs/issues/1795
-const DEFAULT_OPERATION = "rowHeatMap";
-const DEFAULT_HEATMAP_COLORS = "white,red";
-const DEFAULT_HEATMAP_STEPS = 256;
-var lastOperation = DEFAULT_OPERATION;
+var lastOperation = DEFAULT_HEATMAP_OPERATION;
 
 chrome.runtime.onMessage.addListener((request, _sender, _response) => {
   execute(request.operation);
@@ -10,7 +6,7 @@ chrome.runtime.onMessage.addListener((request, _sender, _response) => {
 
 function execute(operation) {
   if (!lastOperation) {
-    lastOperation = DEFAULT_OPERATION;
+    lastOperation = DEFAULT_HEATMAP_OPERATION;
   }
 
   if (!operation) {

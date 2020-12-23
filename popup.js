@@ -21,7 +21,10 @@ function loadHeatMapColorScales(selectValue) {
     colorScaleElement.className = "heatmap-colorscales-item" + activeClass;
     colorScaleElement.style.backgroundImage = `url('img/28x28/${colorScale.id}.png')`;
     colorScaleElement.setAttribute("data-colorscale-value", colorScale.value);
-    colorScaleElement.addEventListener("click", heatMapColorScaleOnClickHandler);
+    colorScaleElement.addEventListener(
+      "click",
+      debounce(heatMapColorScaleOnClickHandler, 50)
+    );
 
     colorScaleRow.appendChild(colorScaleElement);
   }
@@ -92,7 +95,31 @@ function restoreOptions() {
   );
 }
 
+function debounce(func, wait, immediate) {
+  var timeout;
+
+  return function executedFunction() {
+    var context = this;
+    var args = arguments;
+
+    var later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+
+    var callNow = immediate && !timeout;
+
+    clearTimeout(timeout);
+
+    timeout = setTimeout(later, wait);
+
+    if (callNow) func.apply(context, args);
+  };
+}
+
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.getElementById("heatMapInvert").addEventListener("input", saveOptions);
-document.getElementById("heatMapContrast").addEventListener("change", saveOptions);
+document.getElementById("heatMapInvert").addEventListener("input", debounce(saveOptions, 150));
+document
+  .getElementById("heatMapContrast")
+  .addEventListener("change", debounce(saveOptions, 150));
 document.getElementById("help").addEventListener("click", openHelp);

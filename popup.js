@@ -19,7 +19,7 @@ function loadHeatMapColorScales(selectValue) {
       colorScale.value.join(",") === selectValue ? " active" : "";
 
     colorScaleElement.className = "heatmap-colorscales-item" + activeClass;
-    colorScaleElement.style.backgroundImage = `url('img/${colorScale.id}.png')`;
+    colorScaleElement.style.backgroundImage = `url('img/28x28/${colorScale.id}.png')`;
     colorScaleElement.setAttribute("data-colorscale-value", colorScale.value);
     colorScaleElement.addEventListener("click", heatMapColorScaleOnClickHandler);
 

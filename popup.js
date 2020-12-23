@@ -4,7 +4,7 @@ function loadHeatMapColorScales(selectValue) {
   const COLOR_SCALES_PER_ROW = 6;
   var colorScaleContainer = document.getElementById("heatMapColors");
   colorScaleContainer.innerHTML = "";
-  
+
   for (let index = 0; index < DEFAULT_HEATMAP_COLORSCALES.length; index++) {
     const colorScale = DEFAULT_HEATMAP_COLORSCALES[index];
 
@@ -28,7 +28,9 @@ function loadHeatMapColorScales(selectValue) {
 }
 
 function heatMapColorScaleOnClickHandler(e) {
-  const activeColorScale = document.querySelector(".heatmap-colorscales-item.active");
+  const activeColorScale = document.querySelector(
+    ".heatmap-colorscales-item.active"
+  );
   if (activeColorScale) activeColorScale.className = "heatmap-colorscales-item";
 
   selectedColorScaleValue = e.target.getAttribute("data-colorscale-value");
@@ -44,29 +46,31 @@ function openHelp() {
 function saveOptions() {
   var colors = selectedColorScaleValue;
   var invert = document.getElementById("heatMapInvert").checked;
-  var steps = document.getElementById("heatMapSteps").value;
+  var contrast = document.getElementById("heatMapContrast").value;
 
-  if (steps > MAX_HEATMAP_STEPS) steps = MAX_HEATMAP_STEPS;
+  if (contrast > MAX_HEATMAP_COLORS) contrast = MAX_HEATMAP_COLORS;
 
   var colorArray = colors.split(",");
-  if (steps < colorArray.length) steps = colorArray.length;
+  if (contrast < colorArray.length) contrast = colorArray.length;
 
   chrome.storage.sync.set(
     {
       heatMapColors: colors,
       heatMapInvert: invert,
-      heatMapSteps: steps,
+      heatMapContrast: contrast,
     },
-    function () {
-      chrome.tabs.query({}, function (tabs) {
-        for (var i = 0; i < tabs.length; ++i) {
-          chrome.tabs.sendMessage(tabs[i].id, {});
-        }
-      });
-    }
+    refreshHeatMaps
   );
 
-  restoreOptions();
+  restoreOptions();  
+}
+
+function refreshHeatMaps() {
+  chrome.tabs.query({}, function (tabs) {
+    for (var i = 0; i < tabs.length; ++i) {
+      chrome.tabs.sendMessage(tabs[i].id, {});
+    }
+  });
 }
 
 function restoreOptions() {
@@ -74,7 +78,7 @@ function restoreOptions() {
     {
       heatMapColors: DEFAULT_HEATMAP_COLORS,
       heatMapInvert: false,
-      heatMapSteps: DEFAULT_HEATMAP_STEPS,
+      heatMapContrast: DEFAULT_HEATMAP_CONTRAST,
     },
     function (settings) {
       loadHeatMapColorScales(settings.heatMapColors);
@@ -82,23 +86,13 @@ function restoreOptions() {
       selectedColorScaleValue = settings.heatMapColors;
 
       document.getElementById("heatMapInvert").checked = settings.heatMapInvert;
-      document.getElementById("heatMapSteps").value = settings.heatMapSteps;
-      document.getElementById("heatMapStepsValue").innerText =
-        settings.heatMapSteps;
+      document.getElementById("heatMapContrast").value =
+        settings.heatMapContrast;
     }
   );
 }
 
-function updateheatMapStepsValue() {
-  document.getElementById(
-    "heatMapStepsValue"
-  ).innerText = document.getElementById("heatMapSteps").value;
-}
-
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.getElementById("heatMapInvert").addEventListener("input", saveOptions);
-document
-  .getElementById("heatMapSteps")
-  .addEventListener("input", updateheatMapStepsValue);
-document.getElementById("heatMapSteps").addEventListener("change", saveOptions);
+document.getElementById("heatMapContrast").addEventListener("change", saveOptions);
 document.getElementById("help").addEventListener("click", openHelp);

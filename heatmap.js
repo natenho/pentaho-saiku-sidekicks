@@ -107,24 +107,25 @@ function colorize(elements, values) {
     {
       heatMapColors: DEFAULT_HEATMAP_COLORS,
       heatMapInvert: false,
-      heatMapSteps: DEFAULT_HEATMAP_STEPS
+      heatMapContrast: DEFAULT_HEATMAP_CONTRAST
     },
     function (settings) {
       var heatMapColors = settings.heatMapColors.split(",");
-      var heatMapSteps = settings.heatMapSteps;
-
+      var numberOfShades = MAX_HEATMAP_COLORS - settings.heatMapContrast;
+      numberOfShades = maxValueIgnoringNull(numberOfShades, heatMapColors.length);
+      
       if (settings.heatMapInvert) {
         heatMapColors = heatMapColors.reverse();
       }
 
-      var colors = chroma.scale(heatMapColors).mode("lab").colors(heatMapSteps);
+      var colors = chroma.scale(heatMapColors).mode("lab").colors(numberOfShades);
 
       var min = values.reduce(minValueIgnoringNull, Number.MAX_VALUE);
       var max = values.reduce(maxValueIgnoringNull, Number.MIN_VALUE);
 
       for (var index = 0; index < elements.length; index++) {
         var colorIndex = Math.round(
-          normalize(values[index], min, max) * (heatMapSteps - 1)
+          normalize(values[index], min, max) * (numberOfShades - 1)
         );
         elements[
           index

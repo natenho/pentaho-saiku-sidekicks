@@ -1,5 +1,24 @@
-const MAX_HEATMAP_COLORS = 256;
-const DEFAULT_HEATMAP_CONTRAST = 50;
+const MAX_HEATMAP_COLORS = 144;
+const DEFAULT_HEATMAP_CONTRAST = 55;
+
+// Just a semi exponential sequence (less colors = higher/perceptual contrast)
+const HEATMAP_CONTRAST_VALUES = [
+  MAX_HEATMAP_COLORS,
+  89,
+  DEFAULT_HEATMAP_CONTRAST,
+  34,
+  21,
+  16,
+  15,
+  10,
+  9,
+  8,
+  7,
+  6,
+  5,
+  4,
+  3,
+]; 
 
 const DEFAULT_HEATMAP_COLOR_RED = "#F8696B";
 const DEFAULT_HEATMAP_COLOR_YELLOW = "#FFEB84";

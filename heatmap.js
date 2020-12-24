@@ -111,7 +111,8 @@ function colorize(elements, values) {
     },
     function (settings) {
       var heatMapColors = settings.heatMapColors.split(",");
-      var numberOfShades = MAX_HEATMAP_COLORS - settings.heatMapContrast;
+      var numberOfShades = settings.heatMapContrast;
+
       numberOfShades = maxValueIgnoringNull(numberOfShades, heatMapColors.length);
       
       if (settings.heatMapInvert) {
@@ -129,7 +130,7 @@ function colorize(elements, values) {
         );
         elements[
           index
-        ].parentElement.style = `background-color: ${colors[colorIndex]} !important`;
+        ].parentElement.style = `background-color: ${colors[colorIndex]}`;
       }
     }
   );

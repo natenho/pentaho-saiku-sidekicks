@@ -49,12 +49,8 @@ function openHelp() {
 function saveOptions() {
   var colors = selectedColorScaleValue;
   var invert = document.getElementById("heatMapInvert").checked;
-  var contrast = document.getElementById("heatMapContrast").value;
-
-  if (contrast > MAX_HEATMAP_COLORS) contrast = MAX_HEATMAP_COLORS;
-
-  var colorArray = colors.split(",");
-  if (contrast < colorArray.length) contrast = colorArray.length;
+  var contrastIndex = document.getElementById("heatMapContrast").value;
+  var contrast = HEATMAP_CONTRAST_VALUES[contrastIndex];
 
   chrome.storage.sync.set(
     {
@@ -65,7 +61,7 @@ function saveOptions() {
     refreshHeatMaps
   );
 
-  restoreOptions();  
+  restoreOptions();
 }
 
 function refreshHeatMaps() {
@@ -89,8 +85,11 @@ function restoreOptions() {
       selectedColorScaleValue = settings.heatMapColors;
 
       document.getElementById("heatMapInvert").checked = settings.heatMapInvert;
-      document.getElementById("heatMapContrast").value =
-        settings.heatMapContrast;
+      document.getElementById("heatMapContrast").max =
+        HEATMAP_CONTRAST_VALUES.length - 1;
+      document.getElementById("heatMapContrast").value = HEATMAP_CONTRAST_VALUES.indexOf(
+        settings.heatMapContrast
+      );
     }
   );
 }
@@ -118,7 +117,9 @@ function debounce(func, wait, immediate) {
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.getElementById("heatMapInvert").addEventListener("input", debounce(saveOptions, 150));
+document
+  .getElementById("heatMapInvert")
+  .addEventListener("input", debounce(saveOptions, 150));
 document
   .getElementById("heatMapContrast")
   .addEventListener("change", debounce(saveOptions, 150));

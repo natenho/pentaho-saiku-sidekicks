@@ -65,7 +65,7 @@ function saveOptions() {
 }
 
 function refreshHeatMaps() {
-  chrome.tabs.query({}, function (tabs) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     for (var i = 0; i < tabs.length; ++i) {
       chrome.tabs.sendMessage(tabs[i].id, {});
     }

@@ -1,0 +1,26 @@
+name: Google Chrome Store Publish
+
+on:
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:  
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      # Runs a single command using the runners shell
+      - name: Zip files
+        run: zip package.zip manifest.json *.html *.css *.js *.png .\quickstart.gif .\img\28x28\*
+      - uses: trmcnvn/chrome-addon@v2
+        with:        
+          extension: bpeenmnidbefimgeljlmggknhlihgnpp
+          zip: package.zip
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}

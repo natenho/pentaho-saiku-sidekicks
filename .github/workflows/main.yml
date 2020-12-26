@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       # Runs a single command using the runners shell
       - name: Zip files
-        run: zip package.zip manifest.json *.html *.css *.js *.png .\quickstart.gif .\img\28x28\*
+        run: zip package.zip manifest.json *.html *.css *.js *.png quickstart.gif img/28x28/*
       - uses: trmcnvn/chrome-addon@v2
         with:        
           extension: bpeenmnidbefimgeljlmggknhlihgnpp

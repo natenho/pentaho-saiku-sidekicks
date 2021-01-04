@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Pentaho Saiku Sidekicks",
   "description": "Renderize heat maps over Saiku Analytics reports in Pentaho",
-  "version": "0.0.7",
+  "version": "0.0.12",
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
@@ -10,15 +10,15 @@
   "content_scripts": [
     {
       "matches": ["*://*/pentaho/Home", "*://*/pentaho/Home?*"],
-      "js": ["common.js", "chroma.min.js", "heatmap.js"],
+      "js": ["common.js", "chroma.min.js", "events.js", "heatmap.js"],
       "run_at": "document_end",
       "all_frames": true
     }
   ],
   "background": {
-    "scripts": ["common.js", "background.js"],
+    "scripts": ["common.js", "startup.js", "context-menu.js"],
     "persistent": false
   },
   "permissions": ["activeTab", "contextMenus", "storage", "tabs"],
-  "icons": { "16": "icon16.png", "48": "icon48.png" , "96": "icon.png"}
+  "icons": { "16": "icon16.png", "48": "icon48.png", "96": "icon.png" }
 }

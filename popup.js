@@ -1,104 +1,152 @@
-var selectedColorScaleValue;
+const loaderContainer = document.getElementById("loaderContainer");
 
-function loadHeatMapColorScales(selectValue) {
-  const COLOR_SCALES_PER_ROW = 6;
-  var colorScaleContainer = document.getElementById("heatMapColors");
-  colorScaleContainer.innerHTML = "";
-  
-  for (let index = 0; index < DEFAULT_HEATMAP_COLORSCALES.length; index++) {
-    const colorScale = DEFAULT_HEATMAP_COLORSCALES[index];
+const heatMapEnabled = document.getElementById("heatMapEnabled");
+const heatMapGrouping = document.getElementById("heatMapGrouping");
+const heatMapColorScale = document.getElementById("heatMapColors");
+const heatMapInvert = document.getElementById("heatMapInvert");
+const heatMapContrast = document.getElementById("heatMapContrast");
 
-    if (index % COLOR_SCALES_PER_ROW == 0) {
-      var colorScaleRow = document.createElement("div");
-      colorScaleRow.className = "heatmap-colorscales-row";
-      colorScaleContainer.appendChild(colorScaleRow);
-    }
+function loadToolbar(
+  toolbarId,
+  buttonClassName,
+  toolbarItems,
+  selectedItemValue
+) {
+  const toolbar = document.getElementById(toolbarId);
+  toolbar.innerHTML = "";
 
-    const colorScaleElement = document.createElement("a");
+  for (let index = 0; index < toolbarItems.length; index++) {
+    const item = toolbarItems[index];
+    const button = document.createElement("a");
     const activeClass =
-      colorScale.value.join(",") === selectValue ? " active" : "";
+      (Array.isArray(item.value) ? item.value.join(",") : item.value) ===
+      selectedItemValue
+        ? " active"
+        : "";
 
-    colorScaleElement.className = "heatmap-colorscales-item" + activeClass;
-    colorScaleElement.style.backgroundImage = `url('img/${colorScale.id}.png')`;
-    colorScaleElement.setAttribute("data-colorscale-value", colorScale.value);
-    colorScaleElement.addEventListener("click", heatMapColorScaleOnClickHandler);
+    button.className = `${buttonClassName} toolbar-button` + activeClass;
+    button.style.backgroundImage = `url('img/28x28/${buttonClassName}-${item.id}.png')`;
+    button.setAttribute("title", item.id);
+    button.setAttribute("data-value", item.value);
+    button.addEventListener("click", toolbarClickHandler);
 
-    colorScaleRow.appendChild(colorScaleElement);
+    toolbar.appendChild(button);
   }
 }
 
-function heatMapColorScaleOnClickHandler(e) {
-  const activeColorScale = document.querySelector(".heatmap-colorscales-item.active");
-  if (activeColorScale) activeColorScale.className = "heatmap-colorscales-item";
+function toolbarClickHandler(e) {
+  const activeButton = e.target.parentElement.querySelector(".active");
+  if (activeButton) activeButton.classList.remove("active");
 
-  selectedColorScaleValue = e.target.getAttribute("data-colorscale-value");
-  e.target.className = "heatmap-colorscales-item active";
+  const selectedValue = e.target.getAttribute("data-value");
+  e.target.parentElement.setAttribute("data-value", selectedValue);
+  e.target.classList.add("active");
 
   saveOptions();
+}
+
+function saveOptions() {
+  var enabled = heatMapEnabled.checked;
+  var grouping = heatMapGrouping.getAttribute("data-value");
+  var colors = heatMapColorScale.getAttribute("data-value");
+  var invert = heatMapInvert.checked;
+  var contrastIndex = heatMapContrast.value;
+  var contrast = HEATMAP_CONTRAST_VALUES[contrastIndex];
+
+  chrome.storage.sync.set(
+    {
+      heatMap: {
+        enabled: enabled,
+        colors: colors,
+        invert: invert,
+        contrast: contrast,
+        grouping: grouping,
+      },
+    },
+    () => notifyActiveTab(NOTIFICATION_TYPE_SETTING_CHANGED)
+  );
+}
+
+function restoreOptions() {
+  heatMapEnabled.disabled = true;
+  disableHeatMapInput();
+
+  chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
+    loadToolbar(
+      "heatMapGrouping",
+      "heatmap-grouping",
+      HEATMAP_GROUPINGS,
+      settings.heatMap.grouping
+    );
+
+    loadToolbar(
+      "heatMapColors",
+      "heatmap-colorscale",
+      HEATMAP_COLORSCALES,
+      settings.heatMap.colors
+    );
+
+    heatMapEnabled.checked = settings.heatMap.enabled;
+    heatMapGrouping.setAttribute("data-value", settings.heatMap.grouping);
+    heatMapColorScale.setAttribute("data-value", settings.heatMap.colors);
+    heatMapInvert.checked = settings.heatMap.invert;
+    heatMapContrast.max = HEATMAP_CONTRAST_VALUES.length - 1;
+    heatMapContrast.value = HEATMAP_CONTRAST_VALUES.indexOf(
+      settings.heatMap.contrast
+    );
+
+    if (settings.heatMap.enabled) {
+      enableHeatMapInput();
+    } else {
+      disableHeatMapInput();
+    }
+
+    heatMapEnabled.disabled = false;
+  });
+}
+
+function disableHeatMapInput() {
+  heatMapInvert.disabled = true;
+  heatMapContrast.disabled = true;
+  document.querySelector(".heatmap-invert.slider").classList.add("disabled");
+  document.querySelectorAll(".toolbar-button").forEach((button) => {
+    button.classList.add("disabled");
+    button.removeEventListener("click", toolbarClickHandler);
+  });
+}
+
+function enableHeatMapInput() {
+  heatMapInvert.disabled = false;
+  heatMapContrast.disabled = false;
+  document.querySelector(".heatmap-invert.slider").classList.remove("disabled");
+  document.querySelectorAll(".toolbar-button").forEach((button) => {
+    button.classList.remove("disabled");
+    button.addEventListener("click", toolbarClickHandler);
+  });
 }
 
 function openHelp() {
   chrome.tabs.create({ url: chrome.extension.getURL("help.html") });
 }
 
-function saveOptions() {
-  var colors = selectedColorScaleValue;
-  var invert = document.getElementById("heatMapInvert").checked;
-  var steps = document.getElementById("heatMapSteps").value;
+function onProcessingMessage(messsage) {
+  if (messsage.processing === "") return;
 
-  if (steps > MAX_HEATMAP_STEPS) steps = MAX_HEATMAP_STEPS;
+  loaderContainer.style.display = messsage.processing ? "block" : "none";
 
-  var colorArray = colors.split(",");
-  if (steps < colorArray.length) steps = colorArray.length;
-
-  chrome.storage.sync.set(
-    {
-      heatMapColors: colors,
-      heatMapInvert: invert,
-      heatMapSteps: steps,
-    },
-    function () {
-      chrome.tabs.query({}, function (tabs) {
-        for (var i = 0; i < tabs.length; ++i) {
-          chrome.tabs.sendMessage(tabs[i].id, {});
-        }
-      });
-    }
-  );
-
-  restoreOptions();
-}
-
-function restoreOptions() {
-  chrome.storage.sync.get(
-    {
-      heatMapColors: DEFAULT_HEATMAP_COLORS,
-      heatMapInvert: false,
-      heatMapSteps: DEFAULT_HEATMAP_STEPS,
-    },
-    function (settings) {
-      loadHeatMapColorScales(settings.heatMapColors);
-
-      selectedColorScaleValue = settings.heatMapColors;
-
-      document.getElementById("heatMapInvert").checked = settings.heatMapInvert;
-      document.getElementById("heatMapSteps").value = settings.heatMapSteps;
-      document.getElementById("heatMapStepsValue").innerText =
-        settings.heatMapSteps;
-    }
-  );
-}
-
-function updateheatMapStepsValue() {
-  document.getElementById(
-    "heatMapStepsValue"
-  ).innerText = document.getElementById("heatMapSteps").value;
+  if (messsage.processing) {
+    disableHeatMapInput();
+  } else {
+    restoreOptions();
+  }
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.getElementById("heatMapInvert").addEventListener("input", saveOptions);
-document
-  .getElementById("heatMapSteps")
-  .addEventListener("input", updateheatMapStepsValue);
-document.getElementById("heatMapSteps").addEventListener("change", saveOptions);
+heatMapEnabled.addEventListener("input", saveOptions);
+heatMapInvert.addEventListener("input", saveOptions);
+heatMapContrast.addEventListener("change", saveOptions);
 document.getElementById("help").addEventListener("click", openHelp);
+
+chrome.runtime.onMessage.addListener((message, _sender, _response) =>
+  onProcessingMessage(message)
+);

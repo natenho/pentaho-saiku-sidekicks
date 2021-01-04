@@ -1,6 +1,7 @@
 const NOTIFICATION_TYPE_REPORT_LOAD_STARTED = "reportLoadStarted";
 const NOTIFICATION_TYPE_REPORT_LOAD_FINISHED = "reportLoadFinished";
 const NOTIFICATION_TYPE_SETTING_CHANGED = "settingChanged";
+const NOTIFICATION_TYPE_COPY_TABLE = "copyTable";
 
 const MAX_HEATMAP_COLORS = 144;
 const DEFAULT_HEATMAP_CONTRAST = 55;
@@ -64,6 +65,7 @@ const DEFAULT_HEATMAP_OPERATION = "rowHeatMap";
 const HEATMAP_GROUPING_ROW = "by-row";
 const HEATMAP_GROUPING_COLUMN = "by-column";
 const HEATMAP_GROUPING_TABLE = "by-table";
+const TABLE_ELEMENT_ID = 'table_123'
 
 const HEATMAP_GROUPINGS = [
   {

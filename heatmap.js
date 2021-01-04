@@ -6,6 +6,9 @@ chrome.runtime.onMessage.addListener((request, _sender, _response) => {
     case NOTIFICATION_TYPE_SETTING_CHANGED:
       heatMap();
       break;
+    case NOTIFICATION_TYPE_COPY_TABLE:
+      copyTable();
+      break;
   }
 });
 
@@ -146,6 +149,28 @@ function extractValues(elements) {
 
   return cellValues;
 }
+
+function copyTable() {
+  activeReportDocument.getSelection().removeAllRanges();
+  let range = document.createRange();
+  tableElement = activeReportDocument.getElementById(TABLE_ELEMENT_ID);
+
+  formatTableNumbers();
+
+  range.selectNode(tableElement);
+  activeReportDocument.getSelection().addRange(range);
+  activeReportDocument.execCommand('copy');
+  activeReportDocument.getSelection().removeAllRanges();
+}
+
+function formatTableNumbers() {
+  fetchDataElements();
+
+  for (var index = 0; index < elements.length; index++) {
+    elements[index].innerText = elements[index].innerText.replace(',', ';').replace('.', ',').replace(';', '.');
+  }
+}
+
 
 var normalize = (v, min, max) => (v - min) / (max - min);
 var minValueIgnoringNull = (a, b) => (isNaN(b) || b > a ? a : b);

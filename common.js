@@ -84,7 +84,7 @@ const DEFAULT_HEATMAP_GROUPING = HEATMAP_GROUPING_ROW;
 
 const DEFAULT_SETTINGS = {
   heatMap: {
-    enabled: true,
+    enabled: false,
     colors: DEFAULT_HEATMAP_COLORS,
     invert: false,
     contrast: DEFAULT_HEATMAP_CONTRAST,

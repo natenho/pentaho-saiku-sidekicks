@@ -147,7 +147,7 @@ function extractValues(elements) {
   return cellValues;
 }
 
-var normalize = (v, min, max) => (max == min ? min : (v - min) / (max - min));
+var normalize = (v, min, max) => (v - min) / (max - min);
 var minValueIgnoringNull = (a, b) => (isNaN(b) || b > a ? a : b);
 var maxValueIgnoringNull = (a, b) => (isNaN(b) || b < a ? a : b);
 

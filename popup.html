@@ -7,7 +7,9 @@
 </head>
 
 <body>
-  <div id="loader-container"><div id="loader"></div></div>
+  <div id="loaderContainer">
+    <div id="loader"></div>
+  </div>
   <img src="icon.png" class="logo" width="24px" height="24px" />
   <h1>Pentaho Saiku Sidekicks</h1>
 
@@ -18,15 +20,32 @@
   <h2>Heat Map</h2>
 
   <div class="setting">
-    <label for="heatMapColors">Color scale:&nbsp;</label>
-    <div id="heatMapColors"></div>
-
-    <input type="checkbox" id="heatMapInvert" />
-    <label for="heatMapInvert">Invert</label>
+    <label for="heatMapEnabled">Enabled</label>
+    <label class="switch">
+      <input id="heatMapEnabled" type="checkbox">
+      <div class="heatmap-enabled slider round"></div>
+    </label>
   </div>
 
   <div class="setting">
-    <label for="heatMapContrast">Contrast:&nbsp;</label>
+    <label for="heatMapGrouping">Grouping</label>
+    <div id="heatMapGrouping" class="toolbar-row"></div>
+  </div>
+
+  <div class="setting">
+    <label for="heatMapColors">Color Scale</label>
+    <div id="heatMapColors" class="toolbar-row"></div>
+    
+    <label class="switch">
+      <input type="checkbox" id="heatMapInvert">
+      <div class="heatmap-invert slider round"></div>
+    </label>
+    <label for="heatMapInvert">&nbsp;&nbsp;Invert</label>
+
+  </div>
+
+  <div class="setting">
+    <label for="heatMapContrast">Contrast</label>
     <input type="range" id="heatMapContrast">
   </div>
 
@@ -39,8 +58,8 @@
       <a target="_blank"
         href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=D5KHS5GJPJ5PQ&amp;currency_code=BRL&amp;source=url"
         rel="nofollow">
-        <img src="https://img.shields.io/badge/Donate-PayPal-green.svg" alt="Fazer uma doação" width="77px"
-          height="16px" style="display: inline-block; vertical-align:middle" /></a>&nbsp;
+        <img src="https://img.shields.io/badge/Donate-PayPal-green.svg" alt="Donate" width="77px" height="16px"
+          style="display: inline-block; vertical-align:middle" /></a>&nbsp;
     </p>
   </div>
   <script src="common.js"></script>

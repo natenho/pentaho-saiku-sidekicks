@@ -17,10 +17,12 @@ jobs:
       # Runs a single command using the runners shell
       - name: Zip files
         run: zip package.zip manifest.json *.html *.css *.js *.png quickstart.gif img/28x28/*
-      - uses: trmcnvn/chrome-addon@v2
+      - name: Upload & Publish Chrome Extension
+        uses: ItzRabbs/chrome-extension-upload-action@v1.4.1      
         with:        
-          extension: bpeenmnidbefimgeljlmggknhlihgnpp
-          zip: package.zip
+          app-id: bpeenmnidbefimgeljlmggknhlihgnpp
+          file-name: './package.zip'
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
           refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          publish: false

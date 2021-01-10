@@ -53,12 +53,23 @@
 
   <h2>Formatting</h2>
   <div class="setting">
+    <label for="formattingEnabled">Enabled</label>
+    <label class="switch">
+      <input id="formattingEnabled" type="checkbox">
+      <div class="heatmap-enabled slider round"></div>
+    </label>
+  </div>
+  <div class="setting">
     <label for="forceNumberFormat">Force Number Format:</label>
     <select id="forceNumberFormat">
       <option value="doNotChange">Don't change number format</option>
       <option value="commaThousandsDotDecimal">"," for thousands and "." for decimals</option>
       <option value="dotThousandsCommaDecimal">"." for thousands and "," for decimals</option>
     </select>
+  </div>
+  <div class="setting">
+    <label for="formatDecimalPlaces">Decimal Places:</label>
+    <input type="number" id="formatDecimalPlaces" name="formatDecimalPlaces" min="0" max="9" value="2">
   </div>
 
   <div class="footer">

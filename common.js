@@ -1,6 +1,7 @@
 const NOTIFICATION_TYPE_REPORT_LOAD_STARTED = "reportLoadStarted";
 const NOTIFICATION_TYPE_REPORT_LOAD_FINISHED = "reportLoadFinished";
 const NOTIFICATION_TYPE_SETTING_CHANGED = "settingChanged";
+const NOTIFICATION_TYPE_FORMAT_SETTING_CHANGED = "formatSettingChanged";
 const NOTIFICATION_TYPE_COPY_TABLE = "copyTable";
 
 const MAX_HEATMAP_COLORS = 144;
@@ -97,7 +98,9 @@ const DEFAULT_SETTINGS = {
     grouping: DEFAULT_HEATMAP_GROUPING,
   },
   formatting: {
-    numberFormat: NUMBER_FORMAT_DO_NOT_CHANGE
+    enabled: false,
+    numberFormat: NUMBER_FORMAT_DO_NOT_CHANGE,
+    decimalPlaces: 2
   }
 };
 

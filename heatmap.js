@@ -5,6 +5,7 @@ chrome.runtime.onMessage.addListener((request, _sender, _response) => {
     case NOTIFICATION_TYPE_REPORT_LOAD_FINISHED:
     case NOTIFICATION_TYPE_SETTING_CHANGED:
       heatMap();
+      formatTableNumbers();
       break;
     case NOTIFICATION_TYPE_COPY_TABLE:
       copyTable();
@@ -54,6 +55,14 @@ function fetchDataElements() {
   lastRel = getLastRel(elements);
 }
 
+function fetchDataTotalElements() {
+  totalElements = activeReportDocument.querySelectorAll(
+    "tbody tr [class='data total']"
+  );
+
+  if (elements.length == 0) return;
+}
+
 // "rel" attribute contains the cell coordinate in pivot in the format "col:row"
 function getLastRel(elements) {
   var lastElement = elements[elements.length - 1];
@@ -93,8 +102,6 @@ function prepareHeatMap() {
     } else {
       clearHeatMap();
     }
-
-    formatTableNumbers(settings.formatting.numberFormat);
 
     notifyHeatMapOperationFinished();
   });
@@ -163,29 +170,45 @@ function copyTable() {
   activeReportDocument.getSelection().removeAllRanges();
 }
 
-function formatTableNumbers(numberFormat) {
-  switch(numberFormat){
-    case NUMBER_FORMAT_DO_NOT_CHANGE:
-      return;
-    case NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL:
-      fromThousandsSep = '.';
-      toThousandsSep = ',';
-      fromDecimalSep = ',';
-      toDecimalSep = '.';
-      break;
-    case NUMBER_FORMAT_DOT_THOUSANDS_COMMA_DECIMAL:
-      fromThousandsSep = ',';
-      toThousandsSep = '.';
-      fromDecimalSep = '.';
-      toDecimalSep = ',';
-      break;
-  }
+function formatTableNumbers() {
+  chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
+    if (settings.formatting.enabled) {
+      decimalPlaces = settings.formatting.decimalPlaces;
 
-  fetchDataElements();
+      switch(settings.formatting.numberFormat){
+        case NUMBER_FORMAT_DO_NOT_CHANGE:
+          return;
+        case NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL:
+          numberFormat = new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces });
+          fromThousandsSep = '.';
+          toThousandsSep = ',';
+          fromDecimalSep = ',';
+          toDecimalSep = '.';
+          break;
+        case NUMBER_FORMAT_DOT_THOUSANDS_COMMA_DECIMAL:
+          numberFormat = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces });
+          fromThousandsSep = ',';
+          toThousandsSep = '.';
+          fromDecimalSep = '.';
+          toDecimalSep = ',';
+          break;
+      }
 
-  for (var index = 0; index < elements.length; index++) {
-    elements[index].innerText = elements[index].innerText.replace(fromThousandsSep, ';').replace(fromDecimalSep, toDecimalSep).replace(';', toThousandsSep);
-  }
+      fetchDataElements();
+
+      for (var index = 0; index < elements.length; index++) {
+        unformattedNumber = elements[index].getAttribute("alt");
+        preFormattedNumber = elements[index].innerText;
+        numberPartsRegexp = new RegExp('([^\\d]+)?([0-9,\\.]+)(.*)', '');
+        matchResult = preFormattedNumber.match(numberPartsRegexp);
+
+        numberPrefix = matchResult[1] == null ? "" : matchResult[1];
+        numberSuffix = matchResult[3] == null ? "" : matchResult[3];
+
+        elements[index].innerText = numberPrefix + numberFormat.format(unformattedNumber) + numberSuffix;
+      }
+    }
+  });
 }
 
 

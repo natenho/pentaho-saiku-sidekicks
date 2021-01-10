@@ -5,7 +5,9 @@ const heatMapGrouping = document.getElementById("heatMapGrouping");
 const heatMapColorScale = document.getElementById("heatMapColors");
 const heatMapInvert = document.getElementById("heatMapInvert");
 const heatMapContrast = document.getElementById("heatMapContrast");
+const formattingEnabledToggle = document.getElementById("formattingEnabled");
 const forceNumberFormat = document.getElementById("forceNumberFormat");
+const formatDecimalPlaces = document.getElementById("formatDecimalPlaces");
 
 function loadToolbar(
   toolbarId,
@@ -53,7 +55,10 @@ function saveOptions() {
   var invert = heatMapInvert.checked;
   var contrastIndex = heatMapContrast.value;
   var contrast = HEATMAP_CONTRAST_VALUES[contrastIndex];
+
+  var formattingEnabled = formattingEnabledToggle.checked;
   var numberFormat = forceNumberFormat.value;
+  var decimalPlaces = formatDecimalPlaces.value;
 
   chrome.storage.sync.set(
     {
@@ -65,7 +70,9 @@ function saveOptions() {
         grouping: grouping,
       },
       formatting: {
-        numberFormat: numberFormat
+        enabled: formattingEnabled,
+        numberFormat: numberFormat,
+        decimalPlaces: decimalPlaces
       },
     },
     () => notifyActiveTab(NOTIFICATION_TYPE_SETTING_CHANGED)
@@ -100,25 +107,40 @@ function restoreOptions() {
       settings.heatMap.contrast
     );
 
+    formattingEnabledToggle.checked = settings.formatting.enabled;
+    forceNumberFormat.value = settings.formatting.numberFormat;
+    formatDecimalPlaces.value = settings.formatting.decimalPlaces;
+
     if (settings.heatMap.enabled) {
       enableHeatMapInput();
     } else {
       disableHeatMapInput();
     }
 
+    if (settings.formatting.enabled) {
+      disableFormattingInput();
+    } else {
+      enableFormattingInput();
+    }
+
     heatMapEnabled.disabled = false;
+    formattingEnabledToggle.disabled = false;
   });
 }
 
 function disableHeatMapInput() {
   heatMapInvert.disabled = true;
   heatMapContrast.disabled = true;
-  forceNumberFormat.disabled = true;
   document.querySelector(".heatmap-invert.slider").classList.add("disabled");
   document.querySelectorAll(".toolbar-button").forEach((button) => {
     button.classList.add("disabled");
     button.removeEventListener("click", toolbarClickHandler);
   });
+}
+
+function disableFormattingInput() {
+  forceNumberFormat.disabled = false;
+  formatDecimalPlaces.disabled = false;
 }
 
 function enableHeatMapInput() {
@@ -132,6 +154,11 @@ function enableHeatMapInput() {
   });
 }
 
+function enableFormattingInput() {
+  forceNumberFormat.disabled = true;
+  formatDecimalPlaces.disabled = true;
+}
+
 function openHelp() {
   chrome.tabs.create({ url: chrome.extension.getURL("help.html") });
 }
@@ -143,16 +170,22 @@ function onProcessingMessage(messsage) {
 
   if (messsage.processing) {
     disableHeatMapInput();
+    disableFormattingInput()
   } else {
     restoreOptions();
   }
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
+
 heatMapEnabled.addEventListener("input", saveOptions);
 heatMapInvert.addEventListener("input", saveOptions);
 heatMapContrast.addEventListener("change", saveOptions);
+
+formattingEnabledToggle.addEventListener("change", saveOptions);
 forceNumberFormat.addEventListener("change", saveOptions);
+formatDecimalPlaces.addEventListener("change", saveOptions);
+
 document.getElementById("help").addEventListener("click", openHelp);
 
 chrome.runtime.onMessage.addListener((message, _sender, _response) =>

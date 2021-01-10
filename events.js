@@ -59,6 +59,7 @@ var reportObserver = new MutationObserver((mutations) => {
     if (mutation.addedNodes[0]?.nodeName === "THEAD") {
       notifyReportLoadFinished();
       heatMap(); //TODO Move to a centralized feature runner
+      formatTableNumbers();
     }
   });
 });

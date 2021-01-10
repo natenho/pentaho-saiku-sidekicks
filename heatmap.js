@@ -94,6 +94,8 @@ function prepareHeatMap() {
       clearHeatMap();
     }
 
+    formatTableNumbers(settings.formatting.numberFormat);
+
     notifyHeatMapOperationFinished();
   });
 }
@@ -155,19 +157,34 @@ function copyTable() {
   let range = document.createRange();
   tableElement = activeReportDocument.getElementById(TABLE_ELEMENT_ID);
 
-  formatTableNumbers();
-
   range.selectNode(tableElement);
   activeReportDocument.getSelection().addRange(range);
   activeReportDocument.execCommand('copy');
   activeReportDocument.getSelection().removeAllRanges();
 }
 
-function formatTableNumbers() {
+function formatTableNumbers(numberFormat) {
+  switch(numberFormat){
+    case NUMBER_FORMAT_DO_NOT_CHANGE:
+      return;
+    case NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL:
+      fromThousandsSep = '.';
+      toThousandsSep = ',';
+      fromDecimalSep = ',';
+      toDecimalSep = '.';
+      break;
+    case NUMBER_FORMAT_DOT_THOUSANDS_COMMA_DECIMAL:
+      fromThousandsSep = ',';
+      toThousandsSep = '.';
+      fromDecimalSep = '.';
+      toDecimalSep = ',';
+      break;
+  }
+
   fetchDataElements();
 
   for (var index = 0; index < elements.length; index++) {
-    elements[index].innerText = elements[index].innerText.replace(',', ';').replace('.', ',').replace(';', '.');
+    elements[index].innerText = elements[index].innerText.replace(fromThousandsSep, ';').replace(fromDecimalSep, toDecimalSep).replace(';', toThousandsSep);
   }
 }
 

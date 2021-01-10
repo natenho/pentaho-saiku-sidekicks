@@ -5,6 +5,7 @@ const heatMapGrouping = document.getElementById("heatMapGrouping");
 const heatMapColorScale = document.getElementById("heatMapColors");
 const heatMapInvert = document.getElementById("heatMapInvert");
 const heatMapContrast = document.getElementById("heatMapContrast");
+const forceNumberFormat = document.getElementById("forceNumberFormat");
 
 function loadToolbar(
   toolbarId,
@@ -52,6 +53,7 @@ function saveOptions() {
   var invert = heatMapInvert.checked;
   var contrastIndex = heatMapContrast.value;
   var contrast = HEATMAP_CONTRAST_VALUES[contrastIndex];
+  var numberFormat = forceNumberFormat.value;
 
   chrome.storage.sync.set(
     {
@@ -61,6 +63,9 @@ function saveOptions() {
         invert: invert,
         contrast: contrast,
         grouping: grouping,
+      },
+      formatting: {
+        numberFormat: numberFormat
       },
     },
     () => notifyActiveTab(NOTIFICATION_TYPE_SETTING_CHANGED)
@@ -108,6 +113,7 @@ function restoreOptions() {
 function disableHeatMapInput() {
   heatMapInvert.disabled = true;
   heatMapContrast.disabled = true;
+  forceNumberFormat.disabled = true;
   document.querySelector(".heatmap-invert.slider").classList.add("disabled");
   document.querySelectorAll(".toolbar-button").forEach((button) => {
     button.classList.add("disabled");
@@ -118,6 +124,7 @@ function disableHeatMapInput() {
 function enableHeatMapInput() {
   heatMapInvert.disabled = false;
   heatMapContrast.disabled = false;
+  forceNumberFormat.disabled = false;
   document.querySelector(".heatmap-invert.slider").classList.remove("disabled");
   document.querySelectorAll(".toolbar-button").forEach((button) => {
     button.classList.remove("disabled");
@@ -145,6 +152,7 @@ document.addEventListener("DOMContentLoaded", restoreOptions);
 heatMapEnabled.addEventListener("input", saveOptions);
 heatMapInvert.addEventListener("input", saveOptions);
 heatMapContrast.addEventListener("change", saveOptions);
+forceNumberFormat.addEventListener("change", saveOptions);
 document.getElementById("help").addEventListener("click", openHelp);
 
 chrome.runtime.onMessage.addListener((message, _sender, _response) =>

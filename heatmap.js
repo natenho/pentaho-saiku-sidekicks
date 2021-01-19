@@ -162,7 +162,7 @@ function extractValues(elements) {
 function copyTable() {
   activeReportDocument.getSelection().removeAllRanges();
   let range = document.createRange();
-  tableElement = activeReportDocument.getElementById(TABLE_ELEMENT_ID);
+  tableElement = activeReportDocument.querySelector(TABLE_ELEMENT_SELECTOR);
 
   range.selectNode(tableElement);
   activeReportDocument.getSelection().addRange(range);

@@ -70,7 +70,7 @@ const DEFAULT_HEATMAP_OPERATION = "rowHeatMap";
 const HEATMAP_GROUPING_ROW = "by-row";
 const HEATMAP_GROUPING_COLUMN = "by-column";
 const HEATMAP_GROUPING_TABLE = "by-table";
-const TABLE_ELEMENT_ID = 'table_123'
+const TABLE_ELEMENT_SELECTOR = 'div .table_wrapper'
 
 const HEATMAP_GROUPINGS = [
   {

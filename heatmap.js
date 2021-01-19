@@ -198,6 +198,10 @@ function formatTableNumbers() {
 
       for (var index = 0; index < elements.length; index++) {
         unformattedNumber = elements[index].getAttribute("alt");
+        if (unformattedNumber === "undefined") {
+          continue;
+        }
+
         preFormattedNumber = elements[index].innerText;
         numberPartsRegexp = new RegExp('([^\\d]+)?([0-9,\\.]+)(.*)', '');
         matchResult = preFormattedNumber.match(numberPartsRegexp);

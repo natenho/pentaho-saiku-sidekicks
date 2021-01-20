@@ -1,6 +1,4 @@
 chrome.runtime.onMessage.addListener((request, _sender, _response) => {
-  console.log(request, _sender);
-
   switch (request.type) {
     case NOTIFICATION_TYPE_REPORT_LOAD_FINISHED:
     case NOTIFICATION_TYPE_SETTING_CHANGED:
@@ -214,7 +212,6 @@ function formatTableNumbers() {
     }
   });
 }
-
 
 var normalize = (v, min, max) => (v - min) / (max - min);
 var minValueIgnoringNull = (a, b) => (isNaN(b) || b > a ? a : b);

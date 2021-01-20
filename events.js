@@ -58,8 +58,7 @@ var reportObserver = new MutationObserver((mutations) => {
     //When the thead and tbody elements were added to the table, it's done
     if (mutation.addedNodes[0]?.nodeName === "THEAD") {
       notifyReportLoadFinished();
-      heatMap(); //TODO Move to a centralized feature runner
-      formatTableNumbers();
+      processRequest({ type: NOTIFICATION_TYPE_REPORT_LOAD_FINISHED });
     }
   });
 });

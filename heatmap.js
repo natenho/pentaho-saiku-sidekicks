@@ -1,15 +1,28 @@
 chrome.runtime.onMessage.addListener((request, _sender, _response) => {
+  processRequest(request);
+});
+
+function processRequest(request) {
+  notifyWorkInProgress();
   switch (request.type) {
     case NOTIFICATION_TYPE_REPORT_LOAD_FINISHED:
     case NOTIFICATION_TYPE_SETTING_CHANGED:
-      heatMap();
-      formatTableNumbers();
+      chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
+        heatMap(settings);
+        formatTableNumbers(settings);
+
+        notifyWorkFinished();
+      });
       break;
     case NOTIFICATION_TYPE_COPY_TABLE:
       copyTable();
+
+      notifyWorkFinished();
       break;
+    default:
+      notifyWorkFinished();
   }
-});
+}
 
 function refreshActiveReportElements() {
   activeReportFrame = document.querySelector(
@@ -18,27 +31,23 @@ function refreshActiveReportElements() {
   activeReportDocument = activeReportFrame?.contentDocument;
 }
 
-function heatMap() {
-  notifyHeatMapOperationStarting();
-
+function heatMap(settings) {
   refreshActiveReportElements();
 
   if (!activeReportDocument) {
-    notifyHeatMapOperationFinished();
     return;
   }
 
   fetchDataElements();
 
   if (elements.length == 0) {
-    notifyHeatMapOperationFinished();
     return;
   }
 
-  prepareHeatMap();
+  prepareHeatMap(settings);
 }
 
-function notifyHeatMapOperationStarting() {
+function notifyWorkInProgress() {
   chrome.runtime.sendMessage({ processing: true });
 }
 
@@ -69,43 +78,39 @@ function getLastRel(elements) {
   return { col: lastElementRel[0], row: lastElementRel[1] };
 }
 
-function prepareHeatMap() {
-  chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
-    if (settings.heatMap.enabled) {
-      var heatMapColors = settings.heatMap.colors.split(",");
-      var colorsCount = settings.heatMap.contrast;
+function prepareHeatMap(settings) {
+  if (settings.heatMap.enabled) {
+    var heatMapColors = settings.heatMap.colors.split(",");
+    var colorsCount = settings.heatMap.contrast;
 
-      colorsCount = maxValueIgnoringNull(colorsCount, heatMapColors.length);
+    colorsCount = maxValueIgnoringNull(colorsCount, heatMapColors.length);
 
-      if (settings.heatMap.invert) {
-        heatMapColors = heatMapColors.reverse();
-      }
-
-      var colors = chroma.scale(heatMapColors).mode("lab").colors(colorsCount);
-
-      switch (settings.heatMap.grouping) {
-        case HEATMAP_GROUPING_COLUMN:
-          columnHeatMap(colors);
-          break;
-        case HEATMAP_GROUPING_ROW:
-          rowHeatMap(colors);
-          break;
-        case HEATMAP_GROUPING_TABLE:
-          tableHeatMap(colors);
-          break;
-        default:
-          clearHeatMap();
-          break;
-      }
-    } else {
-      clearHeatMap();
+    if (settings.heatMap.invert) {
+      heatMapColors = heatMapColors.reverse();
     }
 
-    notifyHeatMapOperationFinished();
-  });
+    var colors = chroma.scale(heatMapColors).mode("lab").colors(colorsCount);
+
+    switch (settings.heatMap.grouping) {
+      case HEATMAP_GROUPING_COLUMN:
+        columnHeatMap(colors);
+        break;
+      case HEATMAP_GROUPING_ROW:
+        rowHeatMap(colors);
+        break;
+      case HEATMAP_GROUPING_TABLE:
+        tableHeatMap(colors);
+        break;
+      default:
+        clearHeatMap();
+        break;
+    }
+  } else {
+    clearHeatMap();
+  }
 }
 
-function notifyHeatMapOperationFinished() {
+function notifyWorkFinished() {
   chrome.runtime.sendMessage({ processing: false });
 }
 
@@ -164,53 +169,68 @@ function copyTable() {
 
   range.selectNode(tableElement);
   activeReportDocument.getSelection().addRange(range);
-  activeReportDocument.execCommand('copy');
+  activeReportDocument.execCommand("copy");
   activeReportDocument.getSelection().removeAllRanges();
 }
 
-function formatTableNumbers() {
-  chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
-    if (settings.formatting.enabled) {
-      decimalPlaces = settings.formatting.decimalPlaces;
+function formatTableNumbers(settings) {
+  notifyWorkInProgress();
 
-      switch(settings.formatting.numberFormat){
-        case NUMBER_FORMAT_DO_NOT_CHANGE:
-          return;
-        case NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL:
-          numberFormat = new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces });
-          fromThousandsSep = '.';
-          toThousandsSep = ',';
-          fromDecimalSep = ',';
-          toDecimalSep = '.';
-          break;
-        case NUMBER_FORMAT_DOT_THOUSANDS_COMMA_DECIMAL:
-          numberFormat = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces });
-          fromThousandsSep = ',';
-          toThousandsSep = '.';
-          fromDecimalSep = '.';
-          toDecimalSep = ',';
-          break;
-      }
+  console.log("starting formatTableNumbers");
 
-      fetchDataElements();
+  if (settings.formatting.enabled) {
+    decimalPlaces = settings.formatting.decimalPlaces;
 
-      for (var index = 0; index < elements.length; index++) {
-        unformattedNumber = elements[index].getAttribute("alt");
-        if (unformattedNumber === "undefined") {
-          continue;
-        }
-
-        preFormattedNumber = elements[index].innerText;
-        numberPartsRegexp = new RegExp('([^\\d]+)?([0-9,\\.]+)(.*)', '');
-        matchResult = preFormattedNumber.match(numberPartsRegexp);
-
-        numberPrefix = matchResult[1] == null ? "" : matchResult[1];
-        numberSuffix = matchResult[3] == null ? "" : matchResult[3];
-
-        elements[index].innerText = numberPrefix + numberFormat.format(unformattedNumber) + numberSuffix;
-      }
+    switch (settings.formatting.numberFormat) {
+      case NUMBER_FORMAT_DO_NOT_CHANGE:
+        return;
+      case NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL:
+        numberFormat = new Intl.NumberFormat("en-US", {
+          style: "decimal",
+          minimumFractionDigits: decimalPlaces,
+          maximumFractionDigits: decimalPlaces,
+        });
+        fromThousandsSep = ".";
+        toThousandsSep = ",";
+        fromDecimalSep = ",";
+        toDecimalSep = ".";
+        break;
+      case NUMBER_FORMAT_DOT_THOUSANDS_COMMA_DECIMAL:
+        numberFormat = new Intl.NumberFormat("pt-BR", {
+          style: "decimal",
+          minimumFractionDigits: decimalPlaces,
+          maximumFractionDigits: decimalPlaces,
+        });
+        fromThousandsSep = ",";
+        toThousandsSep = ".";
+        fromDecimalSep = ".";
+        toDecimalSep = ",";
+        break;
     }
-  });
+
+    fetchDataElements();
+
+    console.time("formatTableNumbers");
+
+    for (var index = 0; index < elements.length; index++) {
+      unformattedNumber = elements[index].getAttribute("alt");
+      if (unformattedNumber === "undefined") {
+        continue;
+      }
+
+      preFormattedNumber = elements[index].innerText;
+      var numberPartsRegexp = new RegExp("([^\\d]+)?([0-9,\\.]+)(.*)", "");
+      matchResult = preFormattedNumber.match(numberPartsRegexp);
+
+      numberPrefix = matchResult[1] == null ? "" : matchResult[1];
+      numberSuffix = matchResult[3] == null ? "" : matchResult[3];
+
+      elements[index].innerText =
+        numberPrefix + numberFormat.format(unformattedNumber) + numberSuffix;
+    }
+
+    console.timeEnd("formatTableNumbers");
+  }
 }
 
 var normalize = (v, min, max) => (v - min) / (max - min);

@@ -33,7 +33,6 @@ const HEATMAP_COLOR_GREEN = "#63BE7B";
 const HEATMAP_COLOR_WHITE = "#FCFCFF";
 const HEATMAP_COLOR_BLUE = "#5A8AC6";
 
-const NUMBER_FORMAT_DO_NOT_CHANGE = "doNotChange";
 const NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL = "commaThousandsDotDecimal";
 const NUMBER_FORMAT_DOT_THOUSANDS_COMMA_DECIMAL = "dotThousandsCommaDecimal";
 
@@ -99,7 +98,7 @@ const DEFAULT_SETTINGS = {
   },
   formatting: {
     enabled: false,
-    numberFormat: NUMBER_FORMAT_DO_NOT_CHANGE,
+    numberFormat: NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL,
     decimalPlaces: 2
   }
 };

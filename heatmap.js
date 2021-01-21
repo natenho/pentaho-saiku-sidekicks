@@ -176,14 +176,10 @@ function copyTable() {
 function formatTableNumbers(settings) {
   notifyWorkInProgress();
 
-  console.log("starting formatTableNumbers");
-
   if (settings.formatting.enabled) {
     let decimalPlaces = settings.formatting.decimalPlaces;
 
     switch (settings.formatting.numberFormat) {
-      case NUMBER_FORMAT_DO_NOT_CHANGE:
-        return;
       case NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL:
         numberFormat = new Intl.NumberFormat("en-US", {
           style: "decimal",

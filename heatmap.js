@@ -179,7 +179,7 @@ function formatTableNumbers(settings) {
   console.log("starting formatTableNumbers");
 
   if (settings.formatting.enabled) {
-    decimalPlaces = settings.formatting.decimalPlaces;
+    let decimalPlaces = settings.formatting.decimalPlaces;
 
     switch (settings.formatting.numberFormat) {
       case NUMBER_FORMAT_DO_NOT_CHANGE:
@@ -210,26 +210,25 @@ function formatTableNumbers(settings) {
 
     fetchDataElements();
 
-    console.time("formatTableNumbers");
-
     for (var index = 0; index < elements.length; index++) {
-      unformattedNumber = elements[index].getAttribute("alt");
+      const unformattedNumber = elements[index].getAttribute("alt");
       if (unformattedNumber === "undefined") {
         continue;
       }
 
-      preFormattedNumber = elements[index].innerText;
-      var numberPartsRegexp = new RegExp("([^\\d]+)?([0-9,\\.]+)(.*)", "");
-      matchResult = preFormattedNumber.match(numberPartsRegexp);
+      const preFormattedNumber = elements[index].textContent;
 
-      numberPrefix = matchResult[1] == null ? "" : matchResult[1];
-      numberSuffix = matchResult[3] == null ? "" : matchResult[3];
+      const matchResult = preFormattedNumber.match(/([^\d]+)?([0-9,\.]+)(.*)/);
+      let numberParts = {
+        prefix: matchResult[1] == null ? "" : matchResult[1],
+        suffix: matchResult[3] == null ? "" : matchResult[3],
+      };
 
-      elements[index].innerText =
-        numberPrefix + numberFormat.format(unformattedNumber) + numberSuffix;
+      elements[index].textContent =
+        numberParts.prefix +
+        numberFormat.format(unformattedNumber) +
+        numberParts.suffix;
     }
-
-    console.timeEnd("formatTableNumbers");
   }
 }
 

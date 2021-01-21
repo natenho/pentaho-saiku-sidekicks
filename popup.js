@@ -118,9 +118,9 @@ function restoreOptions() {
     }
 
     if (settings.formatting.enabled) {
-      disableFormattingInput();
-    } else {
       enableFormattingInput();
+    } else {
+      disableFormattingInput();
     }
 
     heatMapEnabled.disabled = false;
@@ -139,8 +139,8 @@ function disableHeatMapInput() {
 }
 
 function disableFormattingInput() {
-  forceNumberFormat.disabled = false;
-  formatDecimalPlaces.disabled = false;
+  forceNumberFormat.disabled = true;
+  formatDecimalPlaces.disabled = true;
 }
 
 function enableHeatMapInput() {
@@ -155,8 +155,8 @@ function enableHeatMapInput() {
 }
 
 function enableFormattingInput() {
-  forceNumberFormat.disabled = true;
-  formatDecimalPlaces.disabled = true;
+  forceNumberFormat.disabled = false;
+  formatDecimalPlaces.disabled = false;
 }
 
 function openHelp() {
@@ -170,7 +170,7 @@ function onProcessingMessage(messsage) {
 
   if (messsage.processing) {
     disableHeatMapInput();
-    disableFormattingInput()
+    disableFormattingInput();
   } else {
     restoreOptions();
   }

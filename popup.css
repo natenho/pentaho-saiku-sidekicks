@@ -32,9 +32,9 @@ h2 {
   float: left;
 }
 
-.footer {
-  font-size: xx-small;
-  margin: 5px;
+.footer {  
+  text-align: right;  
+  margin-top: 8px;
 }
 
 .setting {

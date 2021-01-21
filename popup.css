@@ -55,6 +55,15 @@ label {
   width: 60px;
 }
 
+label.spaced {
+  width: 60px;
+  margin-left: 15px;
+}
+
+.number-format {
+  font-family: 'Courier New', Courier, monospace;  
+}
+
 .toolbar-row {
   width: 240px;
 }

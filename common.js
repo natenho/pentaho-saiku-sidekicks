@@ -1,6 +1,8 @@
 const NOTIFICATION_TYPE_REPORT_LOAD_STARTED = "reportLoadStarted";
 const NOTIFICATION_TYPE_REPORT_LOAD_FINISHED = "reportLoadFinished";
 const NOTIFICATION_TYPE_SETTING_CHANGED = "settingChanged";
+const NOTIFICATION_TYPE_FORMAT_SETTING_CHANGED = "formatSettingChanged";
+const NOTIFICATION_TYPE_COPY_TABLE = "copyTable";
 
 const MAX_HEATMAP_COLORS = 144;
 const DEFAULT_HEATMAP_CONTRAST = 55;
@@ -30,6 +32,9 @@ const HEATMAP_COLOR_YELLOW2 = "#FFEF9C";
 const HEATMAP_COLOR_GREEN = "#63BE7B";
 const HEATMAP_COLOR_WHITE = "#FCFCFF";
 const HEATMAP_COLOR_BLUE = "#5A8AC6";
+
+const NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL = "commaThousandsDotDecimal";
+const NUMBER_FORMAT_DOT_THOUSANDS_COMMA_DECIMAL = "dotThousandsCommaDecimal";
 
 const HEATMAP_COLORSCALES = [
   {
@@ -64,6 +69,7 @@ const DEFAULT_HEATMAP_OPERATION = "rowHeatMap";
 const HEATMAP_GROUPING_ROW = "by-row";
 const HEATMAP_GROUPING_COLUMN = "by-column";
 const HEATMAP_GROUPING_TABLE = "by-table";
+const TABLE_ELEMENT_SELECTOR = 'div .table_wrapper'
 
 const HEATMAP_GROUPINGS = [
   {
@@ -90,6 +96,11 @@ const DEFAULT_SETTINGS = {
     contrast: DEFAULT_HEATMAP_CONTRAST,
     grouping: DEFAULT_HEATMAP_GROUPING,
   },
+  formatting: {
+    enabled: false,
+    numberFormat: NUMBER_FORMAT_COMMA_THOUSANDS_DOT_DECIMAL,
+    decimalPlaces: 2
+  }
 };
 
 function notifyActiveTab(notificationType) {

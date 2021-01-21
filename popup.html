@@ -49,6 +49,25 @@
     <input type="range" id="heatMapContrast">
   </div>
 
+  <br/>
+
+  <h2>Formatting</h2>
+  <div class="setting">
+    <label for="formattingEnabled">Enabled</label>
+    <label class="switch">
+      <input id="formattingEnabled" type="checkbox">
+      <div class="heatmap-enabled slider round"></div>
+    </label>
+  </div>
+  <div class="setting">
+    <label for="forceNumberFormat">Number Format:</label>
+    <select id="forceNumberFormat" class="number-format">
+      <option value="commaThousandsDotDecimal" class="number-format">-1,234.10</option>
+      <option value="dotThousandsCommaDecimal" class="number-format">-1.234,10</option>
+    </select>
+    <label for="formatDecimalPlaces" class="spaced">Decimal Places:</label>
+    <input type="number" id="formatDecimalPlaces" min="0" max="9" value="2" class="number-format">
+  </div>
   <div class="footer">
     <p style="text-align: center;">
       Developed by Renato Lima

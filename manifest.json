@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Pentaho Saiku Sidekicks",
-  "description": "Renderize heat maps over Saiku Analytics reports in Pentaho and provides some useful tweaks",
+  "description": "Renderize heat maps over Saiku Analytics reports in Pentaho and get some other useful tweaks ;-)",
   "version": "0.1.0",
   "browser_action": {
     "default_icon": "icon.png",

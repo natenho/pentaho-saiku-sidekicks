@@ -60,13 +60,18 @@ label {
   width: 60px;
 }
 
-label.spaced {
-  width: 60px;
+label.larger-label
+{
+  width: 75px;
+}
+
+.left-spaced {  
   margin-left: 15px;
 }
 
 .number-format {
   font-family: "Courier New", Courier, monospace;
+  font-size: 1.1em;
 }
 
 .toolbar-row {

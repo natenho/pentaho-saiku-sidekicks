@@ -32,9 +32,14 @@ h2 {
   float: left;
 }
 
-.footer {  
-  text-align: right;  
+.footer {
+  text-align: right;
   margin-top: 8px;
+}
+
+.footer img {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .setting {
@@ -61,7 +66,7 @@ label.spaced {
 }
 
 .number-format {
-  font-family: 'Courier New', Courier, monospace;  
+  font-family: "Courier New", Courier, monospace;
 }
 
 .toolbar-row {
@@ -179,7 +184,7 @@ label.spaced {
   bottom: 0;
   background-color: #ccc;
   -webkit-transition: 0.4s;
-  transition: 0.4s;  
+  transition: 0.4s;
 }
 
 .slider:before {

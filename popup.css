@@ -28,6 +28,11 @@ h2 {
   border-top-right-radius: 5px;
 }
 
+a,
+a:visited {
+  color: #0080fc;
+}
+
 .logo {
   float: left;
 }
@@ -60,12 +65,11 @@ label {
   width: 60px;
 }
 
-label.larger-label
-{
+label.larger-label {
   width: 75px;
 }
 
-.left-spaced {  
+.left-spaced {
   margin-left: 15px;
 }
 

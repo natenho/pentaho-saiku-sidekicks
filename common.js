@@ -1,8 +1,8 @@
-const NOTIFICATION_TYPE_REPORT_LOAD_STARTED = "reportLoadStarted";
-const NOTIFICATION_TYPE_REPORT_LOAD_FINISHED = "reportLoadFinished";
-const NOTIFICATION_TYPE_SETTING_CHANGED = "settingChanged";
-const NOTIFICATION_TYPE_FORMAT_SETTING_CHANGED = "formatSettingChanged";
-const NOTIFICATION_TYPE_COPY_TABLE = "copyTable";
+const MESSAGE_REPORT_LOAD_STARTED = "reportLoadStarted";
+const MESSAGE_REPORT_LOAD_FINISHED = "reportLoadFinished";
+const MESSAGE_HEATMAP_SETTING_CHANGED = "heatmapSettingChanged";
+const MESSAGE_FORMAT_SETTING_CHANGED = "formatSettingChanged";
+const NOTIFICATION_TYPE_COPY_TABLE = "copyTableRequested";
 
 const MAX_HEATMAP_COLORS = 144;
 const DEFAULT_HEATMAP_CONTRAST = 55;
@@ -103,10 +103,10 @@ const DEFAULT_SETTINGS = {
   }
 };
 
-function notifyActiveTab(notificationType) {
+function notifyActiveTab(message) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) =>
     tabs.forEach((tab) =>
-      chrome.tabs.sendMessage(tab.id, { type: notificationType })
+      chrome.tabs.sendMessage(tab.id, message)
     )
   );
 }

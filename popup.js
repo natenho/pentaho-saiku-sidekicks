@@ -45,10 +45,10 @@ function toolbarClickHandler(e) {
   e.target.parentElement.setAttribute("data-value", selectedValue);
   e.target.classList.add("active");
 
-  saveOptions();
+  saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED);
 }
 
-function saveOptions() {
+function saveOptions(callbackMessage) {
   var enabled = heatMapEnabled.checked;
   var grouping = heatMapGrouping.getAttribute("data-value");
   var colors = heatMapColorScale.getAttribute("data-value");
@@ -72,10 +72,10 @@ function saveOptions() {
       formatting: {
         enabled: formattingEnabled,
         numberFormat: numberFormat,
-        decimalPlaces: decimalPlaces
+        decimalPlaces: decimalPlaces,
       },
     },
-    () => notifyActiveTab(NOTIFICATION_TYPE_SETTING_CHANGED)
+    () => notifyActiveTab(callbackMessage)
   );
 }
 
@@ -178,13 +178,25 @@ function onProcessingMessage(messsage) {
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
-heatMapEnabled.addEventListener("input", saveOptions);
-heatMapInvert.addEventListener("input", saveOptions);
-heatMapContrast.addEventListener("change", saveOptions);
+heatMapEnabled.addEventListener("input", () =>
+  saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED)
+);
+heatMapInvert.addEventListener("input", () =>
+  saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED)
+);
+heatMapContrast.addEventListener("change", () =>
+  saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED)
+);
 
-formattingEnabledToggle.addEventListener("change", saveOptions);
-forceNumberFormat.addEventListener("change", saveOptions);
-formatDecimalPlaces.addEventListener("change", saveOptions);
+formattingEnabledToggle.addEventListener("change", () =>
+  saveOptions(MESSAGE_FORMAT_SETTING_CHANGED)
+);
+forceNumberFormat.addEventListener("change", () =>
+  saveOptions(MESSAGE_FORMAT_SETTING_CHANGED)
+);
+formatDecimalPlaces.addEventListener("change", () =>
+  saveOptions(MESSAGE_FORMAT_SETTING_CHANGED)
+);
 
 document.getElementById("help").addEventListener("click", openHelp);
 

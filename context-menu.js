@@ -59,7 +59,7 @@ chrome.contextMenus.onClicked.addListener((info, _tab) => {
           settings.heatMap.enabled = false;
           break;
       }
-      chrome.storage.sync.set(settings, () => notifyActiveTab(NOTIFICATION_TYPE_SETTING_CHANGED));
+      chrome.storage.sync.set(settings, () => notifyActiveTab(MESSAGE_HEATMAP_SETTING_CHANGED));
     }
   });
 });

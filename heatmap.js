@@ -1,22 +1,33 @@
-chrome.runtime.onMessage.addListener((request, _sender, _response) => {
-  processRequest(request);
+chrome.runtime.onMessage.addListener((message, _sender, _response) => {
+  processMessage(message);
 });
 
-function processRequest(request) {
+//TODO Move to a centralized script
+function processMessage(message) {
   notifyWorkInProgress();
-  switch (request.type) {
-    case NOTIFICATION_TYPE_REPORT_LOAD_FINISHED:
-    case NOTIFICATION_TYPE_SETTING_CHANGED:
+  //TODO Remove duplicated code
+  switch (message) {
+    case MESSAGE_REPORT_LOAD_FINISHED:
+      chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
+        formatTableNumbers(settings);
+        heatMap(settings);
+        notifyWorkFinished();
+      });
+      break;
+    case MESSAGE_HEATMAP_SETTING_CHANGED:
       chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
         heatMap(settings);
+        notifyWorkFinished();
+      });
+      break;
+    case MESSAGE_FORMAT_SETTING_CHANGED:
+      chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
         formatTableNumbers(settings);
-
         notifyWorkFinished();
       });
       break;
     case NOTIFICATION_TYPE_COPY_TABLE:
       copyTable();
-
       notifyWorkFinished();
       break;
     default:
@@ -162,6 +173,7 @@ function extractValues(elements) {
   return cellValues;
 }
 
+//TODO Move to another script
 function copyTable() {
   activeReportDocument.getSelection().removeAllRanges();
   let range = document.createRange();
@@ -173,6 +185,7 @@ function copyTable() {
   activeReportDocument.getSelection().removeAllRanges();
 }
 
+//TODO Move to another script
 function formatTableNumbers(settings) {
   notifyWorkInProgress();
 

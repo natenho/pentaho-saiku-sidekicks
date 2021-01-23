@@ -7,6 +7,9 @@ const NOTIFICATION_TYPE_COPY_TABLE = "copyTableRequested";
 const MAX_HEATMAP_COLORS = 144;
 const DEFAULT_HEATMAP_CONTRAST = 55;
 
+const MIN_DECIMAL_PLACES = 0;
+const MAX_DECIMAL_PLACES = 9;
+
 // Just a semi exponential sequence (less colors = higher/perceptual contrast)
 const HEATMAP_CONTRAST_VALUES = [
   MAX_HEATMAP_COLORS,

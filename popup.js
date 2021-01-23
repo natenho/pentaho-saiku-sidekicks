@@ -48,6 +48,9 @@ function toolbarClickHandler(e) {
   saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED);
 }
 
+var ensureNumberRange = (value, min, max) =>
+  value > max ? max : value < min ? min : value;
+
 function saveOptions(callbackMessage) {
   var enabled = heatMapEnabled.checked;
   var grouping = heatMapGrouping.getAttribute("data-value");
@@ -58,7 +61,11 @@ function saveOptions(callbackMessage) {
 
   var formattingEnabled = formattingEnabledToggle.checked;
   var numberFormat = forceNumberFormat.value;
-  var decimalPlaces = formatDecimalPlaces.value;
+  var decimalPlaces = ensureNumberRange(
+    formatDecimalPlaces.value,
+    MIN_DECIMAL_PLACES,
+    MAX_DECIMAL_PLACES
+  );
 
   chrome.storage.sync.set(
     {

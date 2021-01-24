@@ -57,18 +57,18 @@ var reportObserver = new MutationObserver((mutations) => {
 
     //When the thead and tbody elements were added to the table, it's done
     if (mutation.addedNodes[0]?.nodeName === "THEAD") {
-      notifyReportLoadFinished();
-      heatMap(); //TODO Move to a centralized feature runner
+      notifyReportLoadFinished(); //Notify background scripts
+      processMessage(MESSAGE_REPORT_LOAD_FINISHED); //Notify content scripts
     }
   });
 });
 
 function notifyReportLoadStarting() {
-  chrome.runtime.sendMessage({ type: NOTIFICATION_TYPE_REPORT_LOAD_STARTED });
+  chrome.runtime.sendMessage(MESSAGE_REPORT_LOAD_STARTED);
 }
 
 function notifyReportLoadFinished() {
-  chrome.runtime.sendMessage({ type: NOTIFICATION_TYPE_REPORT_LOAD_FINISHED });
+  chrome.runtime.sendMessage(MESSAGE_REPORT_LOAD_FINISHED);
 }
 
 documentObserver.observe(this.document, DEFAULT_MUTATION_OBSERVER_INIT);

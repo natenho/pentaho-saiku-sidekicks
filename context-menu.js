@@ -2,6 +2,7 @@ const CONTEXT_MENU_HEATMAP_ROW = "heatmap-row";
 const CONTEXT_MENU_HEATMAP_COLUMN = "heatmap-column";
 const CONTEXT_MENU_HEATMAP_TABLE = "heatmap-table";
 const CONTEXT_MENU_HEATMAP_CLEAR = "heatmap-clear";
+const CONTEXT_MENU_COPY_TABLE = "copy-table";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
@@ -27,27 +28,38 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["frame"],
     id: CONTEXT_MENU_HEATMAP_CLEAR,
   });
+
+  chrome.contextMenus.create({
+    title: "Copy Table",
+    contexts: ["frame"],
+    id: CONTEXT_MENU_COPY_TABLE,
+  });
 });
 
 chrome.contextMenus.onClicked.addListener((info, _tab) => {
   chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
-    settings.heatMap.enabled = true;
-
-    switch (info.menuItemId) {
-      case CONTEXT_MENU_HEATMAP_ROW:
-        settings.heatMap.grouping = HEATMAP_GROUPING_ROW;
-        break;
-      case CONTEXT_MENU_HEATMAP_COLUMN:
-        settings.heatMap.grouping = HEATMAP_GROUPING_COLUMN;
-        break;
-      case CONTEXT_MENU_HEATMAP_TABLE:
-        settings.heatMap.grouping = HEATMAP_GROUPING_TABLE;
-        break;
-      case CONTEXT_MENU_HEATMAP_CLEAR:
-        settings.heatMap.enabled = false;
-        break;
+    
+    if(info.menuItemId === CONTEXT_MENU_COPY_TABLE) {
+      notifyActiveTab(NOTIFICATION_TYPE_COPY_TABLE);
     }
+    else {
+      settings.heatMap.enabled = true;
 
-    chrome.storage.sync.set(settings, () => notifyActiveTab(NOTIFICATION_TYPE_SETTING_CHANGED));
+      switch (info.menuItemId) {
+        case CONTEXT_MENU_HEATMAP_ROW:
+          settings.heatMap.grouping = HEATMAP_GROUPING_ROW;
+          break;
+        case CONTEXT_MENU_HEATMAP_COLUMN:
+          settings.heatMap.grouping = HEATMAP_GROUPING_COLUMN;
+          break;
+        case CONTEXT_MENU_HEATMAP_TABLE:
+          settings.heatMap.grouping = HEATMAP_GROUPING_TABLE;
+          break;
+        case CONTEXT_MENU_HEATMAP_CLEAR:
+          settings.heatMap.enabled = false;
+          break;
+      }
+      chrome.storage.sync.set(settings, () => notifyActiveTab(MESSAGE_HEATMAP_SETTING_CHANGED));
+    }
   });
 });

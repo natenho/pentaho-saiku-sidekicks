@@ -5,6 +5,9 @@ const heatMapGrouping = document.getElementById("heatMapGrouping");
 const heatMapColorScale = document.getElementById("heatMapColors");
 const heatMapInvert = document.getElementById("heatMapInvert");
 const heatMapContrast = document.getElementById("heatMapContrast");
+const formattingEnabledToggle = document.getElementById("formattingEnabled");
+const forceNumberFormat = document.getElementById("forceNumberFormat");
+const formatDecimalPlaces = document.getElementById("formatDecimalPlaces");
 
 function loadToolbar(
   toolbarId,
@@ -42,16 +45,27 @@ function toolbarClickHandler(e) {
   e.target.parentElement.setAttribute("data-value", selectedValue);
   e.target.classList.add("active");
 
-  saveOptions();
+  saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED);
 }
 
-function saveOptions() {
+var ensureNumberRange = (value, min, max) =>
+  value > max ? max : value < min ? min : value;
+
+function saveOptions(callbackMessage) {
   var enabled = heatMapEnabled.checked;
   var grouping = heatMapGrouping.getAttribute("data-value");
   var colors = heatMapColorScale.getAttribute("data-value");
   var invert = heatMapInvert.checked;
   var contrastIndex = heatMapContrast.value;
   var contrast = HEATMAP_CONTRAST_VALUES[contrastIndex];
+
+  var formattingEnabled = formattingEnabledToggle.checked;
+  var numberFormat = forceNumberFormat.value;
+  var decimalPlaces = ensureNumberRange(
+    formatDecimalPlaces.value,
+    MIN_DECIMAL_PLACES,
+    MAX_DECIMAL_PLACES
+  );
 
   chrome.storage.sync.set(
     {
@@ -62,8 +76,13 @@ function saveOptions() {
         contrast: contrast,
         grouping: grouping,
       },
+      formatting: {
+        enabled: formattingEnabled,
+        numberFormat: numberFormat,
+        decimalPlaces: decimalPlaces,
+      },
     },
-    () => notifyActiveTab(NOTIFICATION_TYPE_SETTING_CHANGED)
+    () => notifyActiveTab(callbackMessage)
   );
 }
 
@@ -95,13 +114,24 @@ function restoreOptions() {
       settings.heatMap.contrast
     );
 
+    formattingEnabledToggle.checked = settings.formatting.enabled;
+    forceNumberFormat.value = settings.formatting.numberFormat;
+    formatDecimalPlaces.value = settings.formatting.decimalPlaces;
+
     if (settings.heatMap.enabled) {
       enableHeatMapInput();
     } else {
       disableHeatMapInput();
     }
 
+    if (settings.formatting.enabled) {
+      enableFormattingInput();
+    } else {
+      disableFormattingInput();
+    }
+
     heatMapEnabled.disabled = false;
+    formattingEnabledToggle.disabled = false;
   });
 }
 
@@ -115,14 +145,25 @@ function disableHeatMapInput() {
   });
 }
 
+function disableFormattingInput() {
+  forceNumberFormat.disabled = true;
+  formatDecimalPlaces.disabled = true;
+}
+
 function enableHeatMapInput() {
   heatMapInvert.disabled = false;
   heatMapContrast.disabled = false;
+  forceNumberFormat.disabled = false;
   document.querySelector(".heatmap-invert.slider").classList.remove("disabled");
   document.querySelectorAll(".toolbar-button").forEach((button) => {
     button.classList.remove("disabled");
     button.addEventListener("click", toolbarClickHandler);
   });
+}
+
+function enableFormattingInput() {
+  forceNumberFormat.disabled = false;
+  formatDecimalPlaces.disabled = false;
 }
 
 function openHelp() {
@@ -136,15 +177,34 @@ function onProcessingMessage(messsage) {
 
   if (messsage.processing) {
     disableHeatMapInput();
+    disableFormattingInput();
   } else {
     restoreOptions();
   }
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
-heatMapEnabled.addEventListener("input", saveOptions);
-heatMapInvert.addEventListener("input", saveOptions);
-heatMapContrast.addEventListener("change", saveOptions);
+
+heatMapEnabled.addEventListener("input", () =>
+  saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED)
+);
+heatMapInvert.addEventListener("input", () =>
+  saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED)
+);
+heatMapContrast.addEventListener("change", () =>
+  saveOptions(MESSAGE_HEATMAP_SETTING_CHANGED)
+);
+
+formattingEnabledToggle.addEventListener("change", () =>
+  saveOptions(MESSAGE_FORMAT_SETTING_CHANGED)
+);
+forceNumberFormat.addEventListener("change", () =>
+  saveOptions(MESSAGE_FORMAT_SETTING_CHANGED)
+);
+formatDecimalPlaces.addEventListener("change", () =>
+  saveOptions(MESSAGE_FORMAT_SETTING_CHANGED)
+);
+
 document.getElementById("help").addEventListener("click", openHelp);
 
 chrome.runtime.onMessage.addListener((message, _sender, _response) =>

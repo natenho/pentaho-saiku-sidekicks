@@ -28,13 +28,23 @@ h2 {
   border-top-right-radius: 5px;
 }
 
+a,
+a:visited {
+  color: #0080fc;
+}
+
 .logo {
   float: left;
 }
 
 .footer {
-  font-size: xx-small;
-  margin: 5px;
+  text-align: right;
+  margin-top: 8px;
+}
+
+.footer img {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .setting {
@@ -53,6 +63,19 @@ h2 {
 
 label {
   width: 60px;
+}
+
+label.larger-label {
+  width: 75px;
+}
+
+.left-spaced {
+  margin-left: 15px;
+}
+
+.number-format {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.1em;
 }
 
 .toolbar-row {
@@ -170,7 +193,7 @@ label {
   bottom: 0;
   background-color: #ccc;
   -webkit-transition: 0.4s;
-  transition: 0.4s;  
+  transition: 0.4s;
 }
 
 .slider:before {

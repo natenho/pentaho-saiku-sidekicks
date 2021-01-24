@@ -18,11 +18,10 @@ jobs:
       - name: Zip files
         run: zip package.zip manifest.json *.html *.css *.js *.png quickstart.gif img/28x28/*
       - name: Upload & Publish Chrome Extension
-        uses: ItzRabbs/chrome-extension-upload-action@v1.4.1      
-        with:        
-          app-id: bpeenmnidbefimgeljlmggknhlihgnpp
-          file-name: './package.zip'
+        uses: mnao305/chrome-extension-upload@1.1.1
+        with:
+          file-path: ./package.zip
+          extension-id: bpeenmnidbefimgeljlmggknhlihgnpp
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
-          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
-          publish: ${{ secrets.CHROME_PUBLISH }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}     

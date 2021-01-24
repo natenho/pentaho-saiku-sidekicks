@@ -129,7 +129,7 @@ function restoreOptions() {
     } else {
       disableFormattingInput();
     }
-
+    
     heatMapEnabled.disabled = false;
     formattingEnabledToggle.disabled = false;
   });
@@ -210,3 +210,9 @@ document.getElementById("help").addEventListener("click", openHelp);
 chrome.runtime.onMessage.addListener((message, _sender, _response) =>
   onProcessingMessage(message)
 );
+
+document.getElementById(
+  "versionBadge"
+).src = `https://img.shields.io/badge/Version-${
+  chrome.runtime.getManifest().version
+}-blue`;
